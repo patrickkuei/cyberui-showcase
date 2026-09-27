@@ -21,9 +21,9 @@ Broad, non-technical-friendly audience: "vibe coders" (may or may not code), PMs
 3. Mobile-first app
 4. Community / social interface
 
-**Build order (demo-first / "C2"):** Build and ship Demo 1 completely before investing in showcase polish. Add a minimal hub linking to it. Repeat for each subsequent demo, growing the showcase incrementally. No big upfront showcase build before anything is shipped.
+**Build order — demo-first:** Build and ship the dashboard demo completely before investing in showcase polish. Add a minimal hub linking to it. Repeat for each subsequent demo, growing the showcase incrementally. This was chosen over building the full showcase site upfront (landing, guides, case-study templates) and filling it in afterward — that alternative gives a more complete-feeling launch but delays shipping anything real by weeks and risks designing guides around demos that don't exist yet.
 
-**Presentation style ("C3" — embedded, not code-editor):** Each demo gets a showcase page combining three things in one view: a live working preview, a read-only code view, and an inline case study (design/technical rationale). No live code editing, no AI-generated customization — those were considered and explicitly rejected for v1 (cost/complexity not justified pre-revenue).
+**Presentation style — embedded, not a live code editor:** Each demo gets a showcase page combining three things in one view: a live working preview, a read-only code view, and an inline case study (design/technical rationale). Two more-interactive alternatives were considered and rejected for the initial launch: a live in-browser code editor (StackBlitz/CodeSandbox-style, where visitors edit and re-run code), and an AI prompt box that generates custom design variations on demand. Both were rejected because the target audience (see Audience & Goal) cares about seeing a polished result, not editing code, and the AI option has an ongoing API cost with no revenue yet to fund it. Revisit the AI option once there's revenue to support it.
 
 ## Repository Structure
 
@@ -86,13 +86,15 @@ All four demos share cyberui-2045's core dark/neon cyberpunk visual language —
   3. Deploy the combined `showcase/dist/` as a single GitHub Pages artifact.
 - **Why one workflow, not five:** At solo/small scale, splitting into per-package workflows adds deploy-ordering and partial-failure coordination with no real benefit.
 
-## Explicitly Out of Scope (v1)
+## Explicitly Out of Scope for the Initial Launch
 
-- Live in-browser code editor (StackBlitz/CodeSandbox-style).
-- AI-powered design remix/generation (considered — rejected: API cost with no revenue yet; can revisit later).
-- Deep per-brand theming / "make it match your company colors" demos — not the differentiator.
+- Live in-browser code editor (StackBlitz/CodeSandbox-style) — see Presentation style above.
+- AI-powered design remix/generation — see Presentation style above.
+- Deep per-brand theming / "make it match your company colors" demos — not the differentiator; see Theming above.
 - Analytics/usage tracking on the showcase.
 - Automated tests for demo apps beyond a successful build.
+
+None of these are ruled out permanently — they're deferred until there's a concrete reason (revenue, user demand, or a second iteration of the showcase) to justify the added cost and maintenance.
 
 ## Open Items for Implementation Planning
 
