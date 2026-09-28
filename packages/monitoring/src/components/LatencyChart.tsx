@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card } from 'cyberui-2045';
 import type { LatencyPoint } from '../data/simulation';
-import { useChartColors } from '../theme/chartColors';
+import { useChartColors, chartTooltipProps } from '../theme/chartColors';
 import { formatMs } from '../utils/format';
 
 export interface LatencyChartProps {
@@ -21,8 +21,7 @@ export function LatencyChart({ data }: LatencyChartProps) {
             <YAxis tickFormatter={formatMs} stroke={colors.muted} width={56} />
             <Tooltip
               formatter={(value) => [formatMs(Number(value)), '']}
-              labelFormatter={() => ''}
-              contentStyle={{ background: 'var(--color-surface)', border: `1px solid ${colors.border}` }}
+              {...chartTooltipProps(colors)}
             />
             <Legend />
             <Line type="monotone" dataKey="p50" name="p50" stroke={colors.success} dot={false} />

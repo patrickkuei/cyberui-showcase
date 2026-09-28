@@ -1,7 +1,7 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card } from 'cyberui-2045';
 import type { MetricPoint } from '../data/simulation';
-import { useChartColors } from '../theme/chartColors';
+import { useChartColors, chartTooltipProps } from '../theme/chartColors';
 import { formatCompactNumber } from '../utils/format';
 
 export interface RequestVolumeChartProps {
@@ -21,8 +21,7 @@ export function RequestVolumeChart({ data }: RequestVolumeChartProps) {
             <YAxis tickFormatter={formatCompactNumber} stroke={colors.muted} width={48} />
             <Tooltip
               formatter={(value) => [formatCompactNumber(Number(value)), 'req/s']}
-              labelFormatter={() => ''}
-              contentStyle={{ background: 'var(--color-surface)', border: `1px solid ${colors.border}` }}
+              {...chartTooltipProps(colors)}
             />
             <Area type="monotone" dataKey="value" stroke={colors.secondary} fill={colors.secondary} fillOpacity={0.25} />
           </AreaChart>

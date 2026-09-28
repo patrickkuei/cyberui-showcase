@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card } from 'cyberui-2045';
 import type { UsagePoint } from '../data/simulation';
-import { useChartColors } from '../theme/chartColors';
+import { useChartColors, chartTooltipProps } from '../theme/chartColors';
 import { formatCompactNumber, formatCurrencyPerHour } from '../utils/format';
 
 export interface UsageChartProps {
@@ -27,8 +27,7 @@ export function UsageChart({ data }: UsageChartProps) {
             <YAxis tickFormatter={formatCompactNumber} stroke={colors.muted} width={48} />
             <Tooltip
               formatter={(value) => [formatCompactNumber(Number(value)), 'tokens/min']}
-              labelFormatter={() => ''}
-              contentStyle={{ background: 'var(--color-surface)', border: `1px solid ${colors.border}` }}
+              {...chartTooltipProps(colors)}
             />
             <Bar dataKey="tokensPerMin" fill={colors.accent} radius={[4, 4, 0, 0]} />
           </BarChart>

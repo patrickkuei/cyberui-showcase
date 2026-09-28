@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 
 export interface ChartColors {
   primary: string;
@@ -42,4 +42,14 @@ export function useChartColors(): ChartColors {
     }),
     [],
   );
+}
+
+export function chartTooltipProps(colors: ChartColors): {
+  labelFormatter: () => string;
+  contentStyle: CSSProperties;
+} {
+  return {
+    labelFormatter: () => '',
+    contentStyle: { background: 'var(--color-surface)', border: `1px solid ${colors.border}` },
+  };
 }
