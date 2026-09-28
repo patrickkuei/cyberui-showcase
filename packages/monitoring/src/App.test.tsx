@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from './App';
 
 describe('App', () => {
@@ -35,13 +36,16 @@ describe('App', () => {
     expect(screen.queryByRole('link', { name: 'Endpoints' })).not.toBeInTheDocument();
   });
 
-  it("keeps the request volume chart's rendered SVG unchanged when the mock range toggle is clicked (Review Focus #3)", () => {
+  it("keeps the request volume chart's rendered SVG unchanged when the mock range toggle is clicked (Review Focus #3)", async () => {
     render(<App />);
     const svgBefore = document.querySelector('svg.recharts-surface')?.outerHTML;
     // Guard against a vacuous pass where no chart rendered (undefined === undefined).
     expect(svgBefore).toBeDefined();
 
-    screen.getByRole('button', { name: '5m' }).click();
+    const fiveMin = screen.getByRole('button', { name: '5m' });
+    await userEvent.click(fiveMin);
+    // Non-vacuity: the click really landed and React re-rendered with the new range.
+    expect(fiveMin).toHaveAttribute('aria-pressed', 'true');
 
     const svgAfter = document.querySelector('svg.recharts-surface')?.outerHTML;
     expect(svgAfter).toBe(svgBefore);

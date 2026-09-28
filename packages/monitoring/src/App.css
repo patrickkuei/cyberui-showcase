@@ -237,8 +237,14 @@ body {
 
 /* ---- Shared chart/panel title ------------------------------------------ */
 
+/*
+ * Matches the accent rule cyberui's Card draws under its own title, so the
+ * chart cards read the same as Endpoints/Alerts/What needs attention.
+ */
 .panel-title {
   margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-accent);
   color: var(--color-secondary);
   font-size: 1.25rem;
   font-weight: 600;
@@ -250,11 +256,16 @@ body {
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-accent);
   flex-wrap: wrap;
 }
 
+/* Inside a header row, the rule runs under the whole row (title + toggle) instead. */
 .chart-card-header .panel-title {
   margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 /* ---- Mock chart range toggle -------------------------------------------- */
@@ -360,26 +371,27 @@ body {
 /*
  * Wide screens: the panel's two items sit side by side, so the panel is a
  * slim strip under the readouts instead of pushing the trends below the fold.
- * (ActionPanel renders its items straight into cyberui's Card body, hence :has.)
+ * ActionPanel tags its Card with .action-panel, so this doesn't depend on
+ * cyberui's internal Card markup.
  */
 @media (min-width: 960px) {
-  .action-row :has(> .action-item) {
+  .action-panel {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 1.5rem;
   }
 
   /* The Card's own title stays full width above the two items. */
-  .action-row :has(> .action-item) > :not(.action-item) {
+  .action-panel > :not(.action-item) {
     grid-column: 1 / -1;
   }
 
-  .action-row .action-item {
+  .action-panel .action-item {
     padding-bottom: 0;
     border-bottom: none;
   }
 
-  .action-row .action-item:not(.action-item--static) {
+  .action-panel .action-item:not(.action-item--static) {
     padding-right: 1.5rem;
     border-right: 1px solid var(--color-border-default);
   }
