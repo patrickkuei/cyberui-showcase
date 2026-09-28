@@ -1,0 +1,161 @@
+/*
+ * Nexus AI Platform: monitoring dashboard layout.
+ * Colors come only from cyberui-2045's documented --color-* tokens.
+ * Direction: an instrument panel. One loud element (the product
+ * headline in a condensed industrial face), everything else quiet,
+ * tabular figures so live numbers don't jitter as they tick.
+ */
+
+.dashboard {
+  --gap: clamp(0.75rem, 1.4vw, 1.25rem);
+  --readout-font: Bahnschrift, 'DIN Alternate', 'DIN 2014', 'Roboto Condensed', 'Arial Narrow', sans-serif;
+
+  box-sizing: border-box;
+  min-height: 100vh;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 3.5vw, 3rem) 3rem;
+  color: var(--color-default);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The page background has to sit on <body> so it fills beyond the max-width column. */
+body {
+  margin: 0;
+  background: var(--color-base);
+}
+
+/* ---- Header ---------------------------------------------------------- */
+
+.dashboard-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.dashboard-heading {
+  min-width: 0;
+}
+
+.dashboard-title {
+  margin: 0;
+  font-family: var(--readout-font);
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-default);
+}
+
+.dashboard-live {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.625rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.live-dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  box-shadow: 0 0 0 0 var(--color-secondary);
+  animation: live-pulse 2s ease-out infinite;
+}
+
+/* The only ambient motion on the page: a heartbeat in step with the 2s refresh. */
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-secondary);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.45rem transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}
+
+.dashboard-status {
+  flex: none;
+}
+
+/* SectionTitle doubles as the header rule: scope label plus cyan fade line. */
+.dashboard-scope {
+  margin-top: 1.25rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---- Body grids ------------------------------------------------------ */
+
+.dashboard-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  font-family: var(--readout-font);
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+.chart-cell,
+.lower-cell {
+  min-width: 0;
+}
+
+/* Tablet: two chart columns, request volume (the headline trend) gets the full row. */
+@media (min-width: 720px) {
+  .chart-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-cell--primary {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 960px) {
+  .stat-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lower-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+/* Desktop: all three trends side by side, request volume slightly wider. */
+@media (min-width: 1180px) {
+  .chart-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .chart-cell--primary {
+    grid-column: auto;
+  }
+}
