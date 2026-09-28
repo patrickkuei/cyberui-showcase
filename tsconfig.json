@@ -1,0 +1,21 @@
+{
+  // Shared base compiler options for packages/* to copy from when scaffolding
+  // a new demo. Not extended via "extends" and not part of any package's own
+  // build — each packages/* must stay a fully standalone project (its own
+  // complete tsconfig.json) so it can be extracted via tiged without a
+  // dangling reference back to this file. Update this file and re-copy into
+  // existing packages when the shared conventions change.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

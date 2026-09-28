@@ -1,0 +1,11 @@
+{
+  "name": "cyberui-showcase",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Real-world example apps built with cyberui-2045",
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.2",
+  "engines": {
+    "node": ">=20"
+  }
+}
