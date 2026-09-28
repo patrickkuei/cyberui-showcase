@@ -7,6 +7,7 @@ import { formatRelativeTime } from '../utils/format';
 export interface AlertsFeedProps {
   alerts: Alert[];
   now: number;
+  limit?: number;
 }
 
 const SEVERITY_TO_STATUS: Record<Alert['severity'], NonNullable<TimelineEvent['status']>> = {
@@ -37,8 +38,8 @@ function renderTitle(alert: Alert): ReactNode {
   );
 }
 
-export function AlertsFeed({ alerts, now }: AlertsFeedProps) {
-  const events: AlertTimelineEvent[] = alerts.slice(0, VISIBLE_ALERTS).map((alert) => ({
+export function AlertsFeed({ alerts, now, limit = VISIBLE_ALERTS }: AlertsFeedProps) {
+  const events: AlertTimelineEvent[] = alerts.slice(0, limit).map((alert) => ({
     title: renderTitle(alert),
     time: formatRelativeTime(alert.timestamp, now),
     status: SEVERITY_TO_STATUS[alert.severity],

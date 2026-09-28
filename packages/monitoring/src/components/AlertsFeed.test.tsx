@@ -45,4 +45,15 @@ describe('AlertsFeed', () => {
     expect(bold.tagName).toBe('STRONG');
     expect(screen.getByText(/on us-east-1/)).toBeInTheDocument();
   });
+
+  it('respects a custom limit', () => {
+    const many = Array.from({ length: 12 }, (_, i) => ({
+      id: String(i),
+      severity: 'info' as const,
+      message: `Alert number ${i}`,
+      timestamp: NOW - i * 1000,
+    }));
+    render(<AlertsFeed alerts={many} now={NOW} limit={3} />);
+    expect(screen.getAllByText(/^Alert number \d+$/)).toHaveLength(3);
+  });
 });
