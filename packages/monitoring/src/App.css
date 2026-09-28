@@ -110,15 +110,7 @@ body {
   gap: var(--gap);
 }
 
-.lower-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--gap);
-  align-items: start;
-}
-
-.chart-cell,
-.lower-cell {
+.chart-cell {
   min-width: 0;
 }
 
@@ -136,10 +128,6 @@ body {
 @media (min-width: 960px) {
   .stat-row {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .lower-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 }
 
@@ -161,9 +149,9 @@ body {
  * line, and never competes with the page title below it. Its inline padding
  * matches the page's, so the brand sits on the same left edge as the title.
  * The live dot and health badge live here now, so they're visible on every
- * route instead of only on the Dashboard. The active item is marked by a cyan rule sitting on the nav's
- * bottom border, echoing the SectionTitle fade line rather than adding a new
- * shape (pills) to the page.
+ * route instead of only on the Dashboard. The active item is marked by a
+ * cyan rule sitting on the nav's bottom border, echoing the accent rule
+ * under the card titles rather than adding a new shape (pills) to the page.
  */
 .topnav {
   display: flex;
@@ -203,7 +191,7 @@ body {
 .topnav-link {
   display: flex;
   align-items: center;
-  padding: 0 0.125rem;
+  padding: 0 0.375rem; /* room for the inset focus ring beside the glyphs */
   margin-bottom: -1px; /* lets the active rule overlap the nav's border */
   border-bottom: 2px solid transparent;
   font-size: 0.8125rem;
@@ -215,7 +203,10 @@ body {
     border-color 120ms ease-out;
 }
 
-/* Hover previews the active rule in a quieter color, so it reads as "this is a place you can go". */
+/*
+ * Hover previews the active rule in a quieter color, so it reads as "this is
+ * a place you can go".
+ */
 .topnav-link:hover {
   color: var(--color-default);
   border-bottom-color: var(--color-muted);
@@ -254,8 +245,9 @@ body {
 
 /*
  * Phones: the links are the only way between pages now, so they can't be
- * hidden. They drop to a second row under brand + status and scroll
- * sideways if they ever outgrow it.
+ * hidden. They drop to a second row under brand + status, and wrap to a
+ * further row rather than scroll if they ever outgrow it (a hidden-scrollbar
+ * row gave no sign that a clipped link was reachable).
  */
 @media (max-width: 640px) {
   .topnav {
@@ -276,11 +268,18 @@ body {
   .topnav-links {
     order: 1;
     flex-basis: 100%;
-    gap: 1.25rem;
-    min-height: 2.5rem;
+    flex-wrap: wrap;
+    gap: 0 1rem; /* wrapped rows stack flush; each link carries its own height */
     margin: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
+  }
+
+  /*
+   * Each link is a full-height tap target, so a wrapped row is as tall as the
+   * first. No margin-bottom: there's no nav border to overlap on this row.
+   */
+  .topnav-link {
+    min-height: 2.5rem;
+    margin-bottom: 0;
   }
 }
 
@@ -288,7 +287,7 @@ body {
 
 /*
  * Matches the accent rule cyberui's Card draws under its own title, so the
- * chart cards read the same as Endpoints/Alerts/What needs attention.
+ * chart cards read the same as the Reports cards and What needs attention.
  */
 .panel-title {
   margin: 0 0 1rem;
