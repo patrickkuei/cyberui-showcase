@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card } from 'cyberui-2045';
 
 export interface ActionPanelProps {
@@ -14,10 +14,11 @@ const TONE_VAR: Record<ActionPanelProps['headlineTone'], string> = {
 
 export function ActionPanel({ headline, headlineTone, primaryActionLabel }: ActionPanelProps) {
   const [acknowledged, setAcknowledged] = useState(false);
-
-  useEffect(() => {
+  const [prevHeadline, setPrevHeadline] = useState(headline);
+  if (headline !== prevHeadline) {
+    setPrevHeadline(headline);
     setAcknowledged(false);
-  }, [headline]);
+  }
 
   return (
     <Card title="What needs attention">
