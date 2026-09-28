@@ -31,4 +31,20 @@ describe('EndpointsPage', () => {
     expect(screen.getByText('250 ms')).toBeInTheDocument();
     expect(screen.getByText('4.0%')).toBeInTheDocument();
   });
+
+  it('labels its requests tile plainly and its error-rate tile as a traffic-weighted aggregate, so neither is mistaken for the Dashboard headline metrics (Review Focus #1/#2)', () => {
+    render(<EndpointsPage endpoints={ENDPOINTS} />);
+    // Scoped to the stat row: the endpoint table below also has a "Requests" column header
+    // for this same value, which an unscoped query would also match.
+    const statRow = within(screen.getByRole('region', { name: 'Endpoint summary' }));
+    // "Requests" matches EndpointTable's own column header convention for this same value,
+    // and must not read as a cumulative/lifetime total.
+    expect(statRow.getByText('Requests')).toBeInTheDocument();
+    expect(statRow.queryByText('Total requests')).not.toBeInTheDocument();
+    // "Traffic-weighted error rate" must not be mistaken for the Dashboard's independent
+    // "Error rate" headline metric, which uses the same >2% threshold on a different walk.
+    expect(statRow.getByText('Traffic-weighted error rate')).toBeInTheDocument();
+    expect(statRow.queryByText('Overall error rate')).not.toBeInTheDocument();
+    expect(statRow.getByText('aggregate across endpoints')).toBeInTheDocument();
+  });
 });

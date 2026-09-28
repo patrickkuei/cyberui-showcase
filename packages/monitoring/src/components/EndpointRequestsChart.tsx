@@ -13,11 +13,19 @@ export function EndpointRequestsChart({ endpoints }: EndpointRequestsChartProps)
 
   return (
     <Card title="Requests by endpoint">
-      <div style={{ height: 240 }}>
+      <div style={{ height: 280 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={endpoints}>
+          <BarChart data={endpoints} margin={{ bottom: 24 }}>
             <CartesianGrid stroke={colors.border} strokeDasharray="3 3" />
-            <XAxis dataKey="name" stroke={colors.muted} tick={{ fontSize: 11 }} />
+            <XAxis
+              dataKey="name"
+              stroke={colors.muted}
+              tick={{ fontSize: 11 }}
+              interval={0}
+              angle={-35}
+              textAnchor="end"
+              height={70}
+            />
             <YAxis tickFormatter={formatCompactNumber} stroke={colors.muted} width={48} />
             <Tooltip
               formatter={(value) => [formatCompactNumber(Number(value)), 'requests']}

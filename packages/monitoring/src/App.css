@@ -491,7 +491,9 @@ body {
  * Usage report and Compliance are the same shape (two headline figures and a
  * mock export), so on wide screens they pair up as one summary row; the two
  * detail tables below stay full width so the audit log's event text has room.
- * Each section stretches its Card so the paired cards share a height.
+ * Each section stretches its Card so the paired cards share a height. The
+ * Dashboard's .teaser-cell (below) shares this same stretch-to-equal-height
+ * behavior, so it's included in this same rule rather than duplicated.
  */
 .report-row {
   display: grid;
@@ -499,13 +501,15 @@ body {
   gap: var(--gap);
 }
 
-.report-row > section {
+.report-row > section,
+.teaser-cell {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.report-row > section > * {
+.report-row > section > *,
+.teaser-cell > * {
   flex: 1;
 }
 
@@ -521,10 +525,6 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--gap);
-}
-
-.teaser-cell {
-  min-width: 0;
 }
 
 @media (min-width: 960px) {

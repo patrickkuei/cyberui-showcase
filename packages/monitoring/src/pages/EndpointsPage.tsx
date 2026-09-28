@@ -25,13 +25,14 @@ export function EndpointsPage({ endpoints }: EndpointsPageProps) {
 
       <section className="stat-row" aria-label="Endpoint summary">
         <StatTile label="Endpoints monitored" value={String(endpoints.length)} icon={<ServerIcon />} />
-        <StatTile label="Total requests" value={formatCompactNumber(totalRequests)} icon={<ActivityIcon />} />
+        <StatTile label="Requests" value={formatCompactNumber(totalRequests)} icon={<ActivityIcon />} />
         <StatTile label="Avg latency" value={formatMs(avgLatencyMs)} icon={<ClockIcon />} />
         <StatTile
-          label="Overall error rate"
+          label="Traffic-weighted error rate"
           value={formatPercent(errorRatePct)}
           tone={errorRatePct > 2 ? 'error' : 'success'}
           icon={<AlertTriangleIcon />}
+          status="aggregate across endpoints"
         />
       </section>
 
