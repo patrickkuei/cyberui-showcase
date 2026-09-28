@@ -13,7 +13,8 @@ export function UsageChart({ data }: UsageChartProps) {
   const latest = data[data.length - 1];
 
   return (
-    <Card title="Token usage">
+    <Card variant="default">
+      <h3 className="panel-title">Token usage</h3>
       {latest && (
         <p style={{ margin: '0 0 0.5rem', color: 'var(--color-muted)', fontSize: '0.875rem' }}>
           {formatCurrencyPerHour(latest.costPerHr)} at current rate

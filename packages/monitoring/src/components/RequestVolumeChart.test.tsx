@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { RequestVolumeChart } from './RequestVolumeChart';
 
 const DATA = [
@@ -9,11 +9,24 @@ const DATA = [
 ];
 
 describe('RequestVolumeChart', () => {
-  it('renders a non-empty chart for the given data (Review Focus #4)', () => {
-    const { container } = render(<RequestVolumeChart data={DATA} />);
+  it('renders a non-empty chart for the given data (Review Focus #4, original plan)', () => {
+    const { container } = render(<RequestVolumeChart data={DATA} range="60s" onRangeChange={() => {}} />);
     const svg = container.querySelector('svg.recharts-surface');
     expect(svg).not.toBeNull();
     expect(Number(svg?.getAttribute('width'))).toBeGreaterThan(0);
     expect(Number(svg?.getAttribute('height'))).toBeGreaterThan(0);
+  });
+
+  it('renders the range toggle and forwards range changes without altering the chart data (Review Focus #3)', () => {
+    const onRangeChange = vi.fn();
+    const { rerender, container } = render(<RequestVolumeChart data={DATA} range="60s" onRangeChange={onRangeChange} />);
+    const svgBefore = container.querySelector('svg.recharts-surface')?.outerHTML;
+
+    screen.getByRole('button', { name: '5m' }).click();
+    expect(onRangeChange).toHaveBeenCalledWith('5m');
+
+    rerender(<RequestVolumeChart data={DATA} range="5m" onRangeChange={onRangeChange} />);
+    const svgAfter = container.querySelector('svg.recharts-surface')?.outerHTML;
+    expect(svgAfter).toBe(svgBefore);
   });
 });
