@@ -55,7 +55,7 @@ export default function App() {
 
         <section className="chart-grid" aria-label="Trends">
           <div className="chart-cell chart-cell--primary">
-            <RequestVolumeChart data={state.requestVolume} />
+            <RequestVolumeChart data={state.requestVolume} range="60s" onRangeChange={() => {}} />
           </div>
           <div className="chart-cell">
             <LatencyChart data={state.latencyPercentiles} />
