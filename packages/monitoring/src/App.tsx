@@ -50,6 +50,7 @@ export default function App() {
         requestsPerSec={state.requestsPerSec}
         latestCostPerHr={latestUsage?.costPerHr ?? 0}
         alerts={state.alerts}
+        endpoints={state.endpoints}
       />
     ),
   };

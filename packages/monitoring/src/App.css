@@ -481,6 +481,40 @@ body {
   font-size: 0.8125rem;
 }
 
+.report-note {
+  margin: 0.75rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+/*
+ * Usage report and Compliance are the same shape (two headline figures and a
+ * mock export), so on wide screens they pair up as one summary row; the two
+ * detail tables below stay full width so the audit log's event text has room.
+ * Each section stretches its Card so the paired cards share a height.
+ */
+.report-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.report-row > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.report-row > section > * {
+  flex: 1;
+}
+
+@media (min-width: 960px) {
+  .report-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* ---- Dashboard teasers -------------------------------------------------- */
 
 .teaser-row {
