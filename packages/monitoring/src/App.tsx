@@ -1,50 +1,32 @@
 import { useState } from 'react';
-import { SectionTitle, Badge } from 'cyberui-2045';
+import { Badge } from 'cyberui-2045';
 import { useSimulatedMetrics } from './data/useSimulatedMetrics';
-import { StatTile } from './components/StatTile';
-import { RequestVolumeChart } from './components/RequestVolumeChart';
-import { LatencyChart } from './components/LatencyChart';
-import { UsageChart } from './components/UsageChart';
-import { EndpointTable } from './components/EndpointTable';
-import { AlertsFeed } from './components/AlertsFeed';
-import { ActionPanel } from './components/ActionPanel';
+import { useHashRoute, type Route } from './router/useHashRoute';
+import { DashboardPage } from './pages/DashboardPage';
+import { EndpointsPage } from './pages/EndpointsPage';
+import { AlertsPage } from './pages/AlertsPage';
+import { ReportsPage } from './pages/ReportsPage';
 import type { ChartRange } from './components/ChartRangeToggle';
-import { ActivityIcon, ClockIcon, AlertTriangleIcon, UsersIcon, BellIcon } from './icons';
-import { describeRequestRate, describeLatency, describeErrorRate } from './utils/trend';
-import { formatCompactNumber, formatMs, formatPercent } from './utils/format';
+import { BellIcon } from './icons';
 import './App.css';
 
 const REFRESH_MS = 2000;
 
-// Only "Dashboard" exists in this demo; the rest are rendered inert (span + aria-disabled),
-// not as buttons or links that would go nowhere.
-const NAV_ITEMS = ['Dashboard', 'Endpoints', 'Alerts', 'Settings'] as const;
+const NAV_ITEMS: readonly { label: string; route: Route }[] = [
+  { label: 'Dashboard', route: 'dashboard' },
+  { label: 'Endpoints', route: 'endpoints' },
+  { label: 'Alerts', route: 'alerts' },
+  { label: 'Reports', route: 'reports' },
+];
 
 export default function App() {
   const state = useSimulatedMetrics(REFRESH_MS);
+  // Lives here, not in DashboardPage, so the chosen range survives leaving and returning to the Dashboard.
   const [chartRange, setChartRange] = useState<ChartRange>('60s');
+  const route = useHashRoute();
   // Same 2% threshold the Error rate tile uses, so badge and tile never disagree.
   const isHealthy = state.errorRatePct <= 2;
-
-  // requestVolume's last point is the current value, so the baseline is the 5 points before it.
-  const recentRequestRates = state.requestVolume.slice(-6, -1).map((p) => p.value);
-  const requestTrend = describeRequestRate(state.requestsPerSec, recentRequestRates);
-  const latencyTrend = describeLatency(state.p95LatencyMs);
-  const errorTrend = describeErrorRate(state.errorRatePct);
-
-  // The action panel watches both alarms, using the same thresholds as the stat tiles.
-  // incidentKey stays stable while an incident continues, so an acknowledgment
-  // survives the headline's live number ticking on every refresh.
-  const hasErrorIncident = state.errorRatePct > 2;
-  const hasLatencyIncident = state.p95LatencyMs > 500;
-  const actionIncidentKey = hasErrorIncident ? 'errors' : hasLatencyIncident ? 'latency' : 'healthy';
-  const actionHeadline =
-    actionIncidentKey === 'errors'
-      ? `Investigating elevated error rate (${formatPercent(state.errorRatePct)})`
-      : actionIncidentKey === 'latency'
-        ? `Investigating elevated p95 latency (${formatMs(state.p95LatencyMs)})`
-        : 'No action needed. Every metric is within its threshold.';
-  const actionTone: 'success' | 'error' = actionIncidentKey === 'healthy' ? 'success' : 'error';
+  const latestUsage = state.usage[state.usage.length - 1];
 
   return (
     <div className="dashboard">
@@ -56,103 +38,39 @@ export default function App() {
           <span className="topnav-name">Nexus</span>
         </div>
         <div className="topnav-links">
-          {NAV_ITEMS.map((item) =>
-            item === 'Dashboard' ? (
-              <span key={item} className="topnav-link topnav-link--active" aria-current="page">
-                {item}
-              </span>
-            ) : (
-              <span key={item} className="topnav-link" aria-disabled="true">
-                {item}
-              </span>
-            ),
-          )}
+          {NAV_ITEMS.map(({ label, route: itemRoute }) => (
+            <a
+              key={itemRoute}
+              href={`#/${itemRoute}`}
+              className={route === itemRoute ? 'topnav-link topnav-link--active' : 'topnav-link'}
+              aria-current={route === itemRoute ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          ))}
         </div>
-        <BellIcon className="topnav-bell" />
-      </nav>
-
-      <header className="dashboard-header">
-        <div className="dashboard-heading">
-          <h1 className="dashboard-title">Nexus AI Platform</h1>
-          <p className="dashboard-live">
-            <span className="live-dot" aria-hidden="true" />
-            Live, refreshing every {REFRESH_MS / 1000} seconds
-          </p>
-        </div>
-        <div className="dashboard-status" role="status">
+        <div className="topnav-status" role="status">
+          <span className="live-dot" aria-hidden="true" />
           <Badge variant={isHealthy ? 'success' : 'error'}>
             {isHealthy ? 'All systems operational' : 'Degraded performance'}
           </Badge>
         </div>
-      </header>
-
-      <SectionTitle size="sm" className="dashboard-scope">
-        Production inference API
-      </SectionTitle>
+        <BellIcon className="topnav-bell" />
+      </nav>
 
       <main className="dashboard-body">
-        <section className="stat-row" aria-label="Key metrics">
-          <StatTile
-            label="Requests/sec"
-            value={formatCompactNumber(state.requestsPerSec)}
-            icon={<ActivityIcon />}
-            status={requestTrend.text}
-            statusTone={requestTrend.tone}
+        {route === 'dashboard' && (
+          <DashboardPage state={state} chartRange={chartRange} onChartRangeChange={setChartRange} />
+        )}
+        {route === 'endpoints' && <EndpointsPage endpoints={state.endpoints} />}
+        {route === 'alerts' && <AlertsPage alerts={state.alerts} />}
+        {route === 'reports' && (
+          <ReportsPage
+            requestsPerSec={state.requestsPerSec}
+            latestCostPerHr={latestUsage?.costPerHr ?? 0}
+            alerts={state.alerts}
           />
-          <StatTile
-            label="p95 latency"
-            value={formatMs(state.p95LatencyMs)}
-            tone={state.p95LatencyMs > 500 ? 'warning' : 'default'}
-            icon={<ClockIcon />}
-            status={latencyTrend.text}
-            statusTone={latencyTrend.tone}
-          />
-          <StatTile
-            label="Error rate"
-            value={formatPercent(state.errorRatePct)}
-            tone={state.errorRatePct > 2 ? 'error' : 'success'}
-            icon={<AlertTriangleIcon />}
-            status={errorTrend.text}
-            statusTone={errorTrend.tone}
-          />
-          <StatTile
-            label="Active sessions"
-            value={formatCompactNumber(state.activeSessions)}
-            icon={<UsersIcon />}
-            status="within normal range"
-            statusTone="default"
-          />
-        </section>
-
-        <section className="action-row" aria-label="Recommended actions">
-          <ActionPanel
-            incidentKey={actionIncidentKey}
-            headline={actionHeadline}
-            headlineTone={actionTone}
-            primaryActionLabel={actionIncidentKey === 'healthy' ? undefined : 'Acknowledge'}
-          />
-        </section>
-
-        <section className="chart-grid" aria-label="Trends">
-          <div className="chart-cell chart-cell--primary">
-            <RequestVolumeChart data={state.requestVolume} range={chartRange} onRangeChange={setChartRange} />
-          </div>
-          <div className="chart-cell">
-            <LatencyChart data={state.latencyPercentiles} />
-          </div>
-          <div className="chart-cell">
-            <UsageChart data={state.usage} />
-          </div>
-        </section>
-
-        <section className="lower-grid" aria-label="Endpoints and alerts">
-          <div className="lower-cell">
-            <EndpointTable endpoints={state.endpoints} />
-          </div>
-          <div className="lower-cell">
-            <AlertsFeed alerts={state.alerts} now={Date.now()} />
-          </div>
-        </section>
+        )}
       </main>
     </div>
   );

@@ -1,50 +1,62 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 
 describe('App', () => {
-  it('renders the dashboard header, stat tiles, and panel titles', () => {
-    render(<App />);
-
-    expect(screen.getByText('Nexus AI Platform')).toBeInTheDocument();
-    expect(screen.getByText('Requests/sec')).toBeInTheDocument();
-    expect(screen.getByText('p95 latency')).toBeInTheDocument();
-    // "Error rate" is both a stat tile label and the endpoint table's column header.
-    expect(screen.getAllByText('Error rate')).toHaveLength(2);
-    expect(screen.getByText('Active sessions')).toBeInTheDocument();
-    // "Endpoints" and "Alerts" are also nav labels, so check the panel titles inside <main>.
-    const main = screen.getByRole('main');
-    expect(within(main).getByText('Endpoints')).toBeInTheDocument();
-    expect(within(main).getByText('Alerts')).toBeInTheDocument();
+  afterEach(() => {
+    window.location.hash = '';
   });
 
-  it('renders the top nav and the action panel', () => {
+  it('renders the Dashboard route by default, with the nav, health badge, and action panel', () => {
     render(<App />);
     expect(screen.getByRole('navigation', { name: /primary/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Requests/sec')).toBeInTheDocument();
     expect(screen.getByText('What needs attention')).toBeInTheDocument();
+    expect(screen.getByText(/All systems operational|Degraded performance/)).toBeInTheDocument();
   });
 
-  it('marks the unimplemented nav links as inert rather than broken buttons (Review Focus #4)', () => {
+  it('navigates to the Endpoints page and back via real links (Review Focus #5)', async () => {
     render(<App />);
     const nav = screen.getByRole('navigation', { name: /primary/i });
-    const endpointsLink = within(nav).getByText('Endpoints');
-    expect(endpointsLink.tagName).toBe('SPAN');
-    expect(endpointsLink).toHaveAttribute('aria-disabled', 'true');
-    expect(within(nav).getByText('Dashboard')).toHaveAttribute('aria-current', 'page');
-    expect(screen.queryByRole('button', { name: 'Endpoints' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'Endpoints' })).not.toBeInTheDocument();
+
+    await userEvent.click(within(nav).getByRole('link', { name: 'Endpoints' }));
+    expect(await screen.findByRole('heading', { name: 'Endpoints', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByText('Requests/sec')).not.toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'Endpoints' })).toHaveAttribute('aria-current', 'page');
+
+    await userEvent.click(within(nav).getByRole('link', { name: 'Dashboard' }));
+    expect(await screen.findByRole('heading', { name: 'Dashboard', level: 1 })).toBeInTheDocument();
   });
 
-  it("keeps the request volume chart's rendered SVG unchanged when the mock range toggle is clicked (Review Focus #3)", async () => {
+  it('navigates to Alerts and Reports (Review Focus #5)', async () => {
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: /primary/i });
+
+    await userEvent.click(within(nav).getByRole('link', { name: 'Alerts' }));
+    expect(await screen.findByRole('heading', { name: 'Alerts', level: 1 })).toBeInTheDocument();
+
+    await userEvent.click(within(nav).getByRole('link', { name: 'Reports' }));
+    expect(await screen.findByRole('heading', { name: 'Reports', level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Usage report')).toBeInTheDocument();
+  });
+
+  it('nav links are keyboard-focusable real links (Review Focus #3)', () => {
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: /primary/i });
+    const endpointsLink = within(nav).getByRole('link', { name: 'Endpoints' });
+    expect(endpointsLink.tagName).toBe('A');
+    expect(endpointsLink).toHaveAttribute('href', '#/endpoints');
+  });
+
+  it("keeps the request volume chart's rendered SVG unchanged when the mock range toggle is clicked", async () => {
     render(<App />);
     const svgBefore = document.querySelector('svg.recharts-surface')?.outerHTML;
-    // Guard against a vacuous pass where no chart rendered (undefined === undefined).
     expect(svgBefore).toBeDefined();
 
     const fiveMin = screen.getByRole('button', { name: '5m' });
     await userEvent.click(fiveMin);
-    // Non-vacuity: the click really landed and React re-rendered with the new range.
     expect(fiveMin).toHaveAttribute('aria-pressed', 'true');
 
     const svgAfter = document.querySelector('svg.recharts-surface')?.outerHTML;
