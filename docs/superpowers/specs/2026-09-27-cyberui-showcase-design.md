@@ -14,14 +14,17 @@ Broad, non-technical-friendly audience: "vibe coders" (may or may not code), PMs
 
 ## Selected Approach
 
-**Content strategy:** Ship real, polished example applications (not component demos) covering four use cases, in priority order:
+**Content strategy:** Ship real, polished example applications (not component demos) covering five use cases, in priority order:
 
-1. **AI SaaS dashboard** (flagship — build first)
-2. Landing page / marketing site
-3. Mobile-first app
-4. Community / social interface
+1. **AI product monitoring dashboard** (flagship #1 — build first) — metrics, latency, usage, alerts
+2. **Agent/assistant control panel** (flagship #2) — conversation logs, task queue, status, reasoning
+3. Landing page / marketing site
+4. Mobile-first app
+5. Community / social interface
 
-**Build order — demo-first:** Build and ship the dashboard demo completely before investing in showcase polish. Add a minimal hub linking to it. Repeat for each subsequent demo, growing the showcase incrementally. This was chosen over building the full showcase site upfront (landing, guides, case-study templates) and filling it in afterward — that alternative gives a more complete-feeling launch but delays shipping anything real by weeks and risks designing guides around demos that don't exist yet.
+The original single "AI SaaS dashboard" flagship was split into two standalone demos: a glanceable metrics dashboard and an interactive control panel are different enough UX patterns that one demo was trying to cover two things. Both ship before landing/mobile/social; the monitoring dashboard goes first since it's the more familiar pattern (charts, stat tiles, tables) and gives the showcase hub and CI/CD pipeline a lower-risk shakedown before the more novel control-panel UI.
+
+**Build order — demo-first:** Build and ship one demo completely before investing in showcase polish. Add a minimal hub linking to it. Repeat for each subsequent demo, growing the showcase incrementally. This was chosen over building the full showcase site upfront (landing, guides, case-study templates) and filling it in afterward — that alternative gives a more complete-feeling launch but delays shipping anything real by weeks and risks designing guides around demos that don't exist yet.
 
 **Presentation style — embedded, not a live code editor:** Each demo gets a showcase page combining three things in one view: a live working preview, a read-only code view, and an inline case study (design/technical rationale). Two more-interactive alternatives were considered and rejected for the initial launch: a live in-browser code editor (StackBlitz/CodeSandbox-style, where visitors edit and re-run code), and an AI prompt box that generates custom design variations on demand. Both were rejected because the target audience (see Audience & Goal) cares about seeing a polished result, not editing code, and the AI option has an ongoing API cost with no revenue yet to fund it. Revisit the AI option once there's revenue to support it.
 
@@ -33,7 +36,8 @@ Single monorepo (this repo):
 cyberui-showcase/
 ├── packages/
 │   ├── showcase/       # Main showcase site (landing, gallery, per-demo pages)
-│   ├── dashboard/       # AI SaaS dashboard demo — self-contained
+│   ├── monitoring/      # AI product monitoring dashboard demo — self-contained
+│   ├── agent-panel/     # Agent/assistant control panel demo — self-contained
 │   ├── landing/         # Marketing landing page demo — self-contained
 │   ├── mobile/          # Mobile-first app demo — self-contained
 │   └── social/          # Community/social demo — self-contained
@@ -42,22 +46,22 @@ cyberui-showcase/
 └── README.md
 ```
 
-**Why monorepo:** Solo maintainer, no deadline, 4-5 packages total — well under the threshold where monorepo friction (clone/build time, navigation) becomes a problem. Single CI/CD, single version, demos stay easy to keep in sync with cyberui-2045 releases.
+**Why monorepo:** Solo maintainer, no deadline, 5-6 packages total — well under the threshold where monorepo friction (clone/build time, navigation) becomes a problem. Single CI/CD, single version, demos stay easy to keep in sync with cyberui-2045 releases.
 
-**Why each demo package must be self-contained:** Each `packages/{dashboard,landing,mobile,social}` has its own `package.json` (cyberui-2045 as a normal npm dependency — not a workspace symlink) and imports nothing from a shared runtime layer. This means the folder is already a valid standalone project. Users extract just one demo via:
+**Why each demo package must be self-contained:** Each `packages/{monitoring,agent-panel,landing,mobile,social}` has its own `package.json` (cyberui-2045 as a normal npm dependency — not a workspace symlink) and imports nothing from a shared runtime layer. This means the folder is already a valid standalone project. Users extract just one demo via:
 
 ```bash
-npx tiged patrickkuei/cyberui-showcase/packages/dashboard my-dashboard
-cd my-dashboard && npm install && npm run dev
+npx tiged patrickkuei/cyberui-showcase/packages/monitoring my-monitoring-dashboard
+cd my-monitoring-dashboard && npm install && npm run dev
 ```
 
 No cloning the whole monorepo, no workspace tooling leaking into the user's project. This mirrors the pattern used by `create-next-app --example` and MUI's template gallery.
 
-**Naming:** Packages drop the redundant "demo-" prefix (`packages/dashboard`, not `packages/demo-dashboard`) since everything under `packages/` other than `showcase` is implicitly a demo. Showcase routes use `/gallery/*` (not `/demos/*`) to avoid an echo with the package names.
+**Naming:** Packages drop the redundant "demo-" prefix (`packages/monitoring`, not `packages/demo-monitoring`) since everything under `packages/` other than `showcase` is implicitly a demo. Showcase routes use `/gallery/*` (not `/demos/*`) to avoid an echo with the package names.
 
 ## Showcase Site
 
-Routes: `/`, `/gallery/dashboard`, `/gallery/landing`, `/gallery/mobile`, `/gallery/social`.
+Routes: `/`, `/gallery/monitoring`, `/gallery/agent-panel`, `/gallery/landing`, `/gallery/mobile`, `/gallery/social`.
 
 Each `/gallery/*` page shows:
 - A **live preview** via `<iframe>` pointing at that demo's separately-deployed static build (not rendered inline in the showcase's own React tree)
@@ -70,7 +74,7 @@ Detailed page layout/visual design is deliberately deferred — not part of this
 
 ## Theming
 
-All four demos share cyberui-2045's core dark/neon cyberpunk visual language — that consistency is the actual product differentiator, not a limitation to engineer around. Each demo varies only its **accent hue** (e.g., cyan for dashboard, magenta for social) by overriding the same token names with different values. This casually demonstrates the token system is swappable without turning the showcase into a "look how themeable we are" pitch, which is not cyberui-2045's differentiator.
+All five demos share cyberui-2045's core dark/neon cyberpunk visual language — that consistency is the actual product differentiator, not a limitation to engineer around. Each demo varies only its **accent hue** (e.g., cyan for the monitoring dashboard, violet for the agent control panel, magenta for social) by overriding the same token names with different values. This casually demonstrates the token system is swappable without turning the showcase into a "look how themeable we are" pitch, which is not cyberui-2045's differentiator.
 
 ## Dependency & Versioning
 
@@ -98,4 +102,4 @@ None of these are ruled out permanently — they're deferred until there's a con
 
 ## Open Items for Implementation Planning
 
-- Exact content of the AI dashboard demo (data, charts, panels) — functional detail, not structural.
+- Exact content of the monitoring dashboard and agent control panel demos (data, charts, panels) — functional detail, not structural.
