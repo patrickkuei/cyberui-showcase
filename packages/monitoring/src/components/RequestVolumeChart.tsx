@@ -23,7 +23,14 @@ export function RequestVolumeChart({ data }: RequestVolumeChartProps) {
               formatter={(value) => [formatCompactNumber(Number(value)), 'req/s']}
               {...chartTooltipProps(colors)}
             />
-            <Area type="monotone" dataKey="value" stroke={colors.secondary} fill={colors.secondary} fillOpacity={0.25} />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={colors.secondary}
+              fill={colors.secondary}
+              fillOpacity={0.25}
+              isAnimationActive={false}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>

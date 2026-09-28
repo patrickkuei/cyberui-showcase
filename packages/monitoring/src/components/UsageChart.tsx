@@ -29,7 +29,7 @@ export function UsageChart({ data }: UsageChartProps) {
               formatter={(value) => [formatCompactNumber(Number(value)), 'tokens/min']}
               {...chartTooltipProps(colors)}
             />
-            <Bar dataKey="tokensPerMin" fill={colors.accent} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="tokensPerMin" fill={colors.accent} radius={[4, 4, 0, 0]} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -20,13 +20,13 @@ export function LatencyChart({ data }: LatencyChartProps) {
             <XAxis dataKey="t" tick={false} />
             <YAxis tickFormatter={formatMs} stroke={colors.muted} width={56} />
             <Tooltip
-              formatter={(value) => [formatMs(Number(value)), '']}
+              formatter={(value, name) => [formatMs(Number(value)), name]}
               {...chartTooltipProps(colors)}
             />
             <Legend />
-            <Line type="monotone" dataKey="p50" name="p50" stroke={colors.success} dot={false} />
-            <Line type="monotone" dataKey="p95" name="p95" stroke={colors.warning} dot={false} />
-            <Line type="monotone" dataKey="p99" name="p99" stroke={colors.error} dot={false} />
+            <Line type="monotone" dataKey="p50" name="p50" stroke={colors.success} dot={false} isAnimationActive={false} />
+            <Line type="monotone" dataKey="p95" name="p95" stroke={colors.warning} dot={false} isAnimationActive={false} />
+            <Line type="monotone" dataKey="p99" name="p99" stroke={colors.error} dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>

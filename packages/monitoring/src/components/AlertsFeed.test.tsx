@@ -16,4 +16,17 @@ describe('AlertsFeed', () => {
     expect(screen.getByText('Deploy completed: model-router v2.3.1')).toBeInTheDocument();
     expect(screen.getByText('5m ago')).toBeInTheDocument();
   });
+
+  it('shows only the latest 8 alerts', () => {
+    const many = Array.from({ length: 12 }, (_, i) => ({
+      id: String(i),
+      severity: 'info' as const,
+      message: `Alert number ${i}`,
+      timestamp: NOW - i * 1000,
+    }));
+    render(<AlertsFeed alerts={many} now={NOW} />);
+    expect(screen.getAllByText(/^Alert number \d+$/)).toHaveLength(8);
+    expect(screen.getByText('Alert number 7')).toBeInTheDocument();
+    expect(screen.queryByText('Alert number 8')).not.toBeInTheDocument();
+  });
 });

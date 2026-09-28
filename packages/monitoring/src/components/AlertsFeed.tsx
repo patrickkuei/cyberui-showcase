@@ -14,8 +14,11 @@ const SEVERITY_TO_STATUS: Record<Alert['severity'], NonNullable<TimelineEvent['s
   info: 'info',
 };
 
+/** How many of the most recent alerts the card shows (the simulation keeps more in memory). */
+const VISIBLE_ALERTS = 8;
+
 export function AlertsFeed({ alerts, now }: AlertsFeedProps) {
-  const events: TimelineEvent[] = alerts.map((alert) => ({
+  const events: TimelineEvent[] = alerts.slice(0, VISIBLE_ALERTS).map((alert) => ({
     title: alert.message,
     time: formatRelativeTime(alert.timestamp, now),
     status: SEVERITY_TO_STATUS[alert.severity],
