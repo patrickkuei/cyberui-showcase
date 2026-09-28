@@ -18,6 +18,9 @@ const SEVERITY_TO_STATUS: Record<Alert['severity'], NonNullable<TimelineEvent['s
 /** How many of the most recent alerts the card shows (the simulation keeps more in memory). */
 const VISIBLE_ALERTS = 8;
 
+/** TimelineEvent with ReactNode title for rendering rich alert text. */
+type AlertTimelineEvent = Omit<TimelineEvent, 'title'> & { title: ReactNode };
+
 function renderTitle(alert: Alert): ReactNode {
   if (!alert.highlight || !alert.message.includes(alert.highlight)) {
     return alert.message;
@@ -35,15 +38,15 @@ function renderTitle(alert: Alert): ReactNode {
 }
 
 export function AlertsFeed({ alerts, now }: AlertsFeedProps) {
-  const events = alerts.slice(0, VISIBLE_ALERTS).map((alert) => ({
+  const events: AlertTimelineEvent[] = alerts.slice(0, VISIBLE_ALERTS).map((alert) => ({
     title: renderTitle(alert),
     time: formatRelativeTime(alert.timestamp, now),
     status: SEVERITY_TO_STATUS[alert.severity],
-  })) as unknown as TimelineEvent[];
+  }));
 
   return (
     <Card title="Alerts">
-      <Timeline events={events} size="sm" />
+      <Timeline events={events as unknown as TimelineEvent[]} size="sm" />
     </Card>
   );
 }
