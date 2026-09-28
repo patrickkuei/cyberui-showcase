@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, Button, Table } from 'cyberui-2045';
 import type { TableColumn } from 'cyberui-2045';
-import type { Alert } from '../data/simulation';
+import { MAX_ALERTS, type Alert } from '../data/simulation';
 import { formatCompactNumber, formatRelativeTime } from '../utils/format';
 
 export interface ReportsPageProps {
@@ -10,7 +10,8 @@ export interface ReportsPageProps {
   alerts: Alert[];
 }
 
-const AUDIT_LIMIT = 20;
+/** The audit log lists every event the simulation keeps in memory. */
+const AUDIT_LIMIT = MAX_ALERTS;
 
 const AUDIT_COLUMNS: TableColumn<Alert>[] = [
   { key: 'timestamp', header: 'Time', render: (row) => formatRelativeTime(row.timestamp, Date.now()) },

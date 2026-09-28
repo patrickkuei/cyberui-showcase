@@ -1,4 +1,4 @@
-import type { Alert } from '../data/simulation';
+import { MAX_ALERTS, type Alert } from '../data/simulation';
 import { AlertsFeed } from '../components/AlertsFeed';
 
 export interface AlertsPageProps {
@@ -13,7 +13,8 @@ export function AlertsPage({ alerts }: AlertsPageProps) {
         <p className="page-subtitle">Recent notable events across the platform.</p>
       </header>
       <section aria-label="Alerts">
-        <AlertsFeed alerts={alerts} now={Date.now()} limit={20} />
+        {/* Show everything the simulation keeps; the page's <h1> names the feed. */}
+        <AlertsFeed alerts={alerts} now={Date.now()} limit={MAX_ALERTS} />
       </section>
     </>
   );

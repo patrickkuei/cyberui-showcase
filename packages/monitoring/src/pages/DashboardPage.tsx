@@ -13,9 +13,11 @@ export interface DashboardPageProps {
   state: DashboardState;
   chartRange: ChartRange;
   onChartRangeChange: (range: ChartRange) => void;
+  /** The live refresh interval, so the subtitle can't drift from the real one. */
+  refreshMs: number;
 }
 
-export function DashboardPage({ state, chartRange, onChartRangeChange }: DashboardPageProps) {
+export function DashboardPage({ state, chartRange, onChartRangeChange, refreshMs }: DashboardPageProps) {
   // requestVolume's last point is the current value, so the baseline is the 5 points before it.
   const recentRequestRates = state.requestVolume.slice(-6, -1).map((p) => p.value);
   const requestTrend = describeRequestRate(state.requestsPerSec, recentRequestRates);
@@ -40,7 +42,7 @@ export function DashboardPage({ state, chartRange, onChartRangeChange }: Dashboa
     <>
       <header className="page-header">
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Production inference API, updated live every 2 seconds.</p>
+        <p className="page-subtitle">{`Production inference API, updated live every ${refreshMs / 1000} seconds.`}</p>
       </header>
 
       <section className="stat-row" aria-label="Key metrics">

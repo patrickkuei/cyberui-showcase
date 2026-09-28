@@ -42,12 +42,27 @@ describe('App', () => {
     expect(screen.getByText('Usage report')).toBeInTheDocument();
   });
 
-  it('nav links are keyboard-focusable real links (Review Focus #3)', () => {
+  it('nav links are keyboard-focusable real links, and Enter navigates (Review Focus #3)', async () => {
     render(<App />);
     const nav = screen.getByRole('navigation', { name: /primary/i });
     const endpointsLink = within(nav).getByRole('link', { name: 'Endpoints' });
     expect(endpointsLink.tagName).toBe('A');
     expect(endpointsLink).toHaveAttribute('href', '#/endpoints');
+
+    expect(screen.queryByRole('heading', { name: 'Endpoints', level: 1 })).not.toBeInTheDocument();
+    endpointsLink.focus();
+    expect(endpointsLink).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(await screen.findByRole('heading', { name: 'Endpoints', level: 1 })).toBeInTheDocument();
+  });
+
+  it('sets the document title to the current page', async () => {
+    render(<App />);
+    expect(document.title).toBe('Dashboard — Nexus AI Platform');
+    const nav = screen.getByRole('navigation', { name: /primary/i });
+    await userEvent.click(within(nav).getByRole('link', { name: 'Reports' }));
+    await screen.findByRole('heading', { name: 'Reports', level: 1 });
+    expect(document.title).toBe('Reports — Nexus AI Platform');
   });
 
   it("keeps the request volume chart's rendered SVG unchanged when the mock range toggle is clicked", async () => {

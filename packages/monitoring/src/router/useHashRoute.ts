@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
-export type Route = 'dashboard' | 'endpoints' | 'alerts' | 'reports';
+/** The single source of truth for routes; Route is derived from it so the two can't drift. */
+export const ROUTES = ['dashboard', 'endpoints', 'alerts', 'reports'] as const;
+export type Route = (typeof ROUTES)[number];
 
-const ROUTES: readonly Route[] = ['dashboard', 'endpoints', 'alerts', 'reports'];
 const DEFAULT_ROUTE: Route = 'dashboard';
 
 function parseHash(hash: string): Route {

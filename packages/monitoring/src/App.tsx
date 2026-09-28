@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Badge } from 'cyberui-2045';
 import { useSimulatedMetrics } from './data/useSimulatedMetrics';
-import { useHashRoute, type Route } from './router/useHashRoute';
+import { ROUTES, useHashRoute, type Route } from './router/useHashRoute';
 import { DashboardPage } from './pages/DashboardPage';
 import { EndpointsPage } from './pages/EndpointsPage';
 import { AlertsPage } from './pages/AlertsPage';
@@ -12,12 +12,14 @@ import './App.css';
 
 const REFRESH_MS = 2000;
 
-const NAV_ITEMS: readonly { label: string; route: Route }[] = [
-  { label: 'Dashboard', route: 'dashboard' },
-  { label: 'Endpoints', route: 'endpoints' },
-  { label: 'Alerts', route: 'alerts' },
-  { label: 'Reports', route: 'reports' },
-];
+// Record<Route, ...> (here and for the pages below) makes adding a route
+// without a label or a page a type error, instead of a blank <main>.
+const ROUTE_LABELS: Record<Route, string> = {
+  dashboard: 'Dashboard',
+  endpoints: 'Endpoints',
+  alerts: 'Alerts',
+  reports: 'Reports',
+};
 
 export default function App() {
   const state = useSimulatedMetrics(REFRESH_MS);
@@ -27,6 +29,30 @@ export default function App() {
   // Same 2% threshold the Error rate tile uses, so badge and tile never disagree.
   const isHealthy = state.errorRatePct <= 2;
   const latestUsage = state.usage[state.usage.length - 1];
+
+  useEffect(() => {
+    document.title = `${ROUTE_LABELS[route]} — Nexus AI Platform`;
+  }, [route]);
+
+  const pages: Record<Route, () => ReactNode> = {
+    dashboard: () => (
+      <DashboardPage
+        state={state}
+        chartRange={chartRange}
+        onChartRangeChange={setChartRange}
+        refreshMs={REFRESH_MS}
+      />
+    ),
+    endpoints: () => <EndpointsPage endpoints={state.endpoints} />,
+    alerts: () => <AlertsPage alerts={state.alerts} />,
+    reports: () => (
+      <ReportsPage
+        requestsPerSec={state.requestsPerSec}
+        latestCostPerHr={latestUsage?.costPerHr ?? 0}
+        alerts={state.alerts}
+      />
+    ),
+  };
 
   return (
     <div className="dashboard">
@@ -38,14 +64,14 @@ export default function App() {
           <span className="topnav-name">Nexus</span>
         </div>
         <div className="topnav-links">
-          {NAV_ITEMS.map(({ label, route: itemRoute }) => (
+          {ROUTES.map((itemRoute) => (
             <a
               key={itemRoute}
               href={`#/${itemRoute}`}
               className={route === itemRoute ? 'topnav-link topnav-link--active' : 'topnav-link'}
               aria-current={route === itemRoute ? 'page' : undefined}
             >
-              {label}
+              {ROUTE_LABELS[itemRoute]}
             </a>
           ))}
         </div>
@@ -58,20 +84,7 @@ export default function App() {
         <BellIcon className="topnav-bell" />
       </nav>
 
-      <main className="dashboard-body">
-        {route === 'dashboard' && (
-          <DashboardPage state={state} chartRange={chartRange} onChartRangeChange={setChartRange} />
-        )}
-        {route === 'endpoints' && <EndpointsPage endpoints={state.endpoints} />}
-        {route === 'alerts' && <AlertsPage alerts={state.alerts} />}
-        {route === 'reports' && (
-          <ReportsPage
-            requestsPerSec={state.requestsPerSec}
-            latestCostPerHr={latestUsage?.costPerHr ?? 0}
-            alerts={state.alerts}
-          />
-        )}
-      </main>
+      <main className="dashboard-body">{pages[route]()}</main>
     </div>
   );
 }
