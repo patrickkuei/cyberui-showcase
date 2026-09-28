@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
-import { act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useSimulatedMetrics } from './useSimulatedMetrics';
 
 describe('useSimulatedMetrics', () => {
