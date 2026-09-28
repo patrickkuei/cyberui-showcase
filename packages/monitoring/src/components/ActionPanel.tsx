@@ -28,18 +28,21 @@ export function ActionPanel({ incidentKey, headline, headlineTone, primaryAction
 
   return (
     <Card title="What needs attention" className="action-panel">
-      <div className="action-item">
-        <span className="action-dot" style={{ background: TONE_VAR[headlineTone] }} aria-hidden="true" />
-        <div className="action-item-body">
-          <p className="action-item-title">{headline}</p>
-          {primaryActionLabel && !acknowledged && (
-            <button type="button" className="action-item-button" onClick={() => setAcknowledged(true)}>
-              {primaryActionLabel}
-            </button>
-          )}
-          {primaryActionLabel && acknowledged && <span className="action-item-done">Acknowledged</span>}
+      {primaryActionLabel && (
+        <div className="action-item">
+          <span className="action-dot" style={{ background: TONE_VAR[headlineTone] }} aria-hidden="true" />
+          <div className="action-item-body">
+            <p className="action-item-title">{headline}</p>
+            {!acknowledged ? (
+              <button type="button" className="action-item-button" onClick={() => setAcknowledged(true)}>
+                {primaryActionLabel}
+              </button>
+            ) : (
+              <span className="action-item-done">Acknowledged</span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <div className="action-item action-item--static">
         <span className="action-dot" style={{ background: 'var(--color-success)' }} aria-hidden="true" />
         <div className="action-item-body">

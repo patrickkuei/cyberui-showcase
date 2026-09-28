@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { ActionPanel } from './ActionPanel';
 
 describe('ActionPanel', () => {
-  it('renders the headline', () => {
+  it('shows only the static item when there is no incident (Review Focus #2)', () => {
     render(
       <ActionPanel
         incidentKey="healthy"
@@ -12,7 +12,8 @@ describe('ActionPanel', () => {
         headlineTone="success"
       />,
     );
-    expect(screen.getByText('All systems operational — no action needed')).toBeInTheDocument();
+    expect(screen.queryByText('All systems operational — no action needed')).not.toBeInTheDocument();
+    expect(screen.getByText('Model rollout: model-router v2.3.1')).toBeInTheDocument();
   });
 
   it('shows an action button that becomes an acknowledged state when clicked (Review Focus #5)', async () => {
