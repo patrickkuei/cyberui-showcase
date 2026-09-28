@@ -29,4 +29,20 @@ describe('AlertsFeed', () => {
     expect(screen.getByText('Alert number 7')).toBeInTheDocument();
     expect(screen.queryByText('Alert number 8')).not.toBeInTheDocument();
   });
+
+  it('bolds the highlighted phrase within an alert message', () => {
+    const alerts = [
+      {
+        id: '1',
+        severity: 'critical' as const,
+        message: 'Error rate above threshold on us-east-1',
+        highlight: 'Error rate above threshold',
+        timestamp: NOW - 30_000,
+      },
+    ];
+    render(<AlertsFeed alerts={alerts} now={NOW} />);
+    const bold = screen.getByText('Error rate above threshold');
+    expect(bold.tagName).toBe('STRONG');
+    expect(screen.getByText(/on us-east-1/)).toBeInTheDocument();
+  });
 });

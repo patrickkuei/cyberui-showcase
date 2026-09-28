@@ -29,6 +29,8 @@ export interface Alert {
   id: string;
   severity: AlertSeverity;
   message: string;
+  /** Exact substring of `message` that AlertsFeed bolds; omitted messages render as plain text. */
+  highlight?: string;
   timestamp: number;
 }
 
@@ -99,10 +101,10 @@ const ENDPOINT_BASELINES: readonly EndpointStats[] = [
   { name: '/v1/models', requests: 600, avgLatencyMs: 40, errorRatePct: 0.05 },
 ];
 
-const BACKGROUND_ALERTS: readonly { severity: AlertSeverity; message: string }[] = [
-  { severity: 'info', message: 'Deploy completed: model-router v2.3.1' },
-  { severity: 'info', message: 'Autoscaler added 2 nodes to inference pool' },
-  { severity: 'warning', message: 'Approaching rate limit for org acme-corp' },
+const BACKGROUND_ALERTS: readonly { severity: AlertSeverity; message: string; highlight: string }[] = [
+  { severity: 'info', message: 'Deploy completed: model-router v2.3.1', highlight: 'Deploy completed' },
+  { severity: 'info', message: 'Autoscaler added 2 nodes to inference pool', highlight: 'Autoscaler added 2 nodes' },
+  { severity: 'warning', message: 'Approaching rate limit for org acme-corp', highlight: 'Approaching rate limit' },
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -166,6 +168,7 @@ export function createInitialState(now: number, rng: () => number = Math.random)
         id: 'seed-1',
         severity: 'info',
         message: 'Dashboard connected — streaming live metrics',
+        highlight: 'Dashboard connected',
         timestamp: now,
       },
     ],
@@ -255,11 +258,12 @@ function step(state: DashboardState, now: number, rng: () => number, allowIncide
   // critical error-rate alert only ever fires while the error rate really is
   // above threshold), plus occasional benign background events.
   const newAlerts: Alert[] = [];
-  const push = (severity: AlertSeverity, message: string): void => {
+  const push = (severity: AlertSeverity, message: string, highlight: string): void => {
     newAlerts.unshift({
       id: `alert-${now}-${newAlerts.length}-${Math.floor(rng() * 100000)}`,
       severity,
       message,
+      highlight,
       timestamp: now,
     });
   };
@@ -267,21 +271,21 @@ function step(state: DashboardState, now: number, rng: () => number, allowIncide
   const alarms = { ...state.alarms };
   if (!alarms.errorRate && errorRatePct > ERROR_RATE_THRESHOLD_PCT) {
     alarms.errorRate = true;
-    push('critical', 'Error rate above threshold on us-east-1');
+    push('critical', 'Error rate above threshold on us-east-1', 'Error rate above threshold');
   } else if (alarms.errorRate && errorRatePct < ERROR_RATE_RESOLVE_PCT) {
     alarms.errorRate = false;
-    push('info', 'Resolved: error rate back to normal');
+    push('info', 'Resolved: error rate back to normal', 'Resolved');
   }
   if (!alarms.latency && p95LatencyMs > P95_LATENCY_THRESHOLD_MS) {
     alarms.latency = true;
-    push('warning', 'p95 latency spike on /v1/chat/completions');
+    push('warning', 'p95 latency spike on /v1/chat/completions', 'p95 latency spike');
   } else if (alarms.latency && p95LatencyMs < P95_LATENCY_RESOLVE_MS) {
     alarms.latency = false;
-    push('info', 'Resolved: p95 latency back to normal');
+    push('info', 'Resolved: p95 latency back to normal', 'Resolved');
   }
   if (rng() < BACKGROUND_ALERT_CHANCE) {
     const event = BACKGROUND_ALERTS[Math.floor(rng() * BACKGROUND_ALERTS.length)] ?? BACKGROUND_ALERTS[0];
-    if (event) push(event.severity, event.message);
+    if (event) push(event.severity, event.message, event.highlight);
   }
 
   const alerts = newAlerts.length > 0 ? [...newAlerts, ...state.alerts].slice(0, MAX_ALERTS) : state.alerts;
