@@ -6,7 +6,8 @@ Real-world example apps built with [cyberui-2045](https://github.com/patrickkuei
 
 | Demo | Status |
 |------|--------|
-| AI SaaS dashboard | planned |
+| AI product monitoring dashboard | planned |
+| Agent/assistant control panel | planned |
 | Landing page / marketing site | planned |
 | Mobile-first app | planned |
 | Community / social interface | planned |
