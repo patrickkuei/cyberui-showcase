@@ -480,3 +480,40 @@ body {
   color: var(--color-success);
   font-size: 0.8125rem;
 }
+
+/* ---- Dashboard teasers -------------------------------------------------- */
+
+.teaser-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.teaser-cell {
+  min-width: 0;
+}
+
+@media (min-width: 960px) {
+  .teaser-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+  color: var(--color-secondary);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+}
+
+.card-link:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}

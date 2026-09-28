@@ -4,6 +4,8 @@ import { RequestVolumeChart } from '../components/RequestVolumeChart';
 import { LatencyChart } from '../components/LatencyChart';
 import { UsageChart } from '../components/UsageChart';
 import { ActionPanel } from '../components/ActionPanel';
+import { EndpointTable } from '../components/EndpointTable';
+import { AlertsFeed } from '../components/AlertsFeed';
 import type { ChartRange } from '../components/ChartRangeToggle';
 import { ActivityIcon, ClockIcon, AlertTriangleIcon, UsersIcon } from '../icons';
 import { describeRequestRate, describeLatency, describeErrorRate } from '../utils/trend';
@@ -37,6 +39,8 @@ export function DashboardPage({ state, chartRange, onChartRangeChange, refreshMs
         ? `Investigating elevated p95 latency (${formatMs(state.p95LatencyMs)})`
         : 'No action needed. Every metric is within its threshold.';
   const actionTone: 'success' | 'error' = actionIncidentKey === 'healthy' ? 'success' : 'error';
+
+  const topEndpoints = [...state.endpoints].sort((a, b) => b.requests - a.requests).slice(0, 3);
 
   return (
     <>
@@ -96,6 +100,33 @@ export function DashboardPage({ state, chartRange, onChartRangeChange, refreshMs
         </div>
         <div className="chart-cell">
           <UsageChart data={state.usage} />
+        </div>
+      </section>
+
+      <section className="teaser-row" aria-label="More on this platform">
+        <div className="teaser-cell">
+          <EndpointTable
+            title="Top endpoints"
+            endpoints={topEndpoints}
+            footer={
+              <a className="card-link" href="#/endpoints">
+                View all endpoints →
+              </a>
+            }
+          />
+        </div>
+        <div className="teaser-cell">
+          <AlertsFeed
+            title="Recent alerts"
+            alerts={state.alerts}
+            now={Date.now()}
+            limit={3}
+            footer={
+              <a className="card-link" href="#/alerts">
+                View all alerts →
+              </a>
+            }
+          />
         </div>
       </section>
     </>
