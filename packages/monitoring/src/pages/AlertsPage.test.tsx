@@ -12,8 +12,12 @@ const ALERTS = Array.from({ length: 12 }, (_, i) => ({
 describe('AlertsPage', () => {
   it('renders the page title and more than 8 alerts', () => {
     render(<AlertsPage alerts={ALERTS} />);
-    // Disambiguated from AlertsFeed's own "Alerts" card title (an <h3>) via role/level.
     expect(screen.getByRole('heading', { level: 1, name: 'Alerts' })).toBeInTheDocument();
     expect(screen.getAllByText(/^Alert number \d+$/).length).toBeGreaterThan(8);
+  });
+
+  it('shows the page title once, without a card title repeating it', () => {
+    render(<AlertsPage alerts={ALERTS} />);
+    expect(screen.getAllByRole('heading', { name: 'Alerts' })).toHaveLength(1);
   });
 });

@@ -12,11 +12,13 @@ const COLUMNS: TableColumn<EndpointStats>[] = [
 
 export interface EndpointTableProps {
   endpoints: EndpointStats[];
+  /** Optional card heading; omit it when the surrounding page already names the table. */
+  title?: string;
 }
 
-export function EndpointTable({ endpoints }: EndpointTableProps) {
+export function EndpointTable({ endpoints, title }: EndpointTableProps) {
   return (
-    <Card title="Endpoints">
+    <Card title={title}>
       <Table
         columns={COLUMNS}
         data={endpoints}

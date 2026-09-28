@@ -15,4 +15,12 @@ describe('EndpointTable', () => {
     expect(screen.getByText('145 ms')).toBeInTheDocument();
     expect(screen.getByText('0.6%')).toBeInTheDocument();
   });
+
+  it('renders a card title only when one is given', () => {
+    const { unmount } = render(<EndpointTable endpoints={ENDPOINTS} />);
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+    unmount();
+    render(<EndpointTable endpoints={ENDPOINTS} title="Top routes" />);
+    expect(screen.getByRole('heading', { name: 'Top routes' })).toBeInTheDocument();
+  });
 });

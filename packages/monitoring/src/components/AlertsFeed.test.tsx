@@ -17,6 +17,15 @@ describe('AlertsFeed', () => {
     expect(screen.getByText('5m ago')).toBeInTheDocument();
   });
 
+  it('renders a card title only when one is given', () => {
+    const { unmount } = render(<AlertsFeed alerts={ALERTS} now={NOW} />);
+    // Card titles are <h3>; the Timeline's own items are <h4>, so scope to level 3.
+    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    unmount();
+    render(<AlertsFeed alerts={ALERTS} now={NOW} title="Recent alerts" />);
+    expect(screen.getByRole('heading', { level: 3, name: 'Recent alerts' })).toBeInTheDocument();
+  });
+
   it('shows only the latest 8 alerts', () => {
     const many = Array.from({ length: 12 }, (_, i) => ({
       id: String(i),
