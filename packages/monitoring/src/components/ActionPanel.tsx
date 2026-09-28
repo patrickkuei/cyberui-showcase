@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { Card } from 'cyberui-2045';
 
 export interface ActionPanelProps {
+  /**
+   * Stable identity of the current situation (e.g. 'errors', 'latency', 'healthy').
+   * An acknowledgment lasts until this changes; the headline may tick freely.
+   */
+  incidentKey: string;
   headline: string;
   headlineTone: 'success' | 'error';
   primaryActionLabel?: string;
@@ -12,16 +17,17 @@ const TONE_VAR: Record<ActionPanelProps['headlineTone'], string> = {
   error: 'var(--color-error)',
 };
 
-export function ActionPanel({ headline, headlineTone, primaryActionLabel }: ActionPanelProps) {
+export function ActionPanel({ incidentKey, headline, headlineTone, primaryActionLabel }: ActionPanelProps) {
   const [acknowledged, setAcknowledged] = useState(false);
-  const [prevHeadline, setPrevHeadline] = useState(headline);
-  if (headline !== prevHeadline) {
-    setPrevHeadline(headline);
+  // Reset during render (not in an effect) when a genuinely new incident starts.
+  const [prevIncidentKey, setPrevIncidentKey] = useState(incidentKey);
+  if (incidentKey !== prevIncidentKey) {
+    setPrevIncidentKey(incidentKey);
     setAcknowledged(false);
   }
 
   return (
-    <Card title="What needs attention">
+    <Card title="What needs attention" className="action-panel">
       <div className="action-item">
         <span className="action-dot" style={{ background: TONE_VAR[headlineTone] }} aria-hidden="true" />
         <div className="action-item-body">

@@ -31,10 +31,19 @@ export default function App() {
   const latencyTrend = describeLatency(state.p95LatencyMs);
   const errorTrend = describeErrorRate(state.errorRatePct);
 
-  const actionHeadline = isHealthy
-    ? 'No action needed. Every metric is within its threshold.'
-    : `Investigating elevated error rate (${formatPercent(state.errorRatePct)})`;
-  const actionTone: 'success' | 'error' = isHealthy ? 'success' : 'error';
+  // The action panel watches both alarms, using the same thresholds as the stat tiles.
+  // incidentKey stays stable while an incident continues, so an acknowledgment
+  // survives the headline's live number ticking on every refresh.
+  const hasErrorIncident = state.errorRatePct > 2;
+  const hasLatencyIncident = state.p95LatencyMs > 500;
+  const actionIncidentKey = hasErrorIncident ? 'errors' : hasLatencyIncident ? 'latency' : 'healthy';
+  const actionHeadline =
+    actionIncidentKey === 'errors'
+      ? `Investigating elevated error rate (${formatPercent(state.errorRatePct)})`
+      : actionIncidentKey === 'latency'
+        ? `Investigating elevated p95 latency (${formatMs(state.p95LatencyMs)})`
+        : 'No action needed. Every metric is within its threshold.';
+  const actionTone: 'success' | 'error' = actionIncidentKey === 'healthy' ? 'success' : 'error';
 
   return (
     <div className="dashboard">
@@ -116,9 +125,10 @@ export default function App() {
 
         <section className="action-row" aria-label="Recommended actions">
           <ActionPanel
+            incidentKey={actionIncidentKey}
             headline={actionHeadline}
             headlineTone={actionTone}
-            primaryActionLabel={isHealthy ? undefined : 'Acknowledge'}
+            primaryActionLabel={actionIncidentKey === 'healthy' ? undefined : 'Acknowledge'}
           />
         </section>
 
