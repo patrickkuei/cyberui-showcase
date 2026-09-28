@@ -99,6 +99,9 @@ const ENDPOINT_BASELINES: readonly EndpointStats[] = [
   { name: '/v1/embeddings', requests: 1100, avgLatencyMs: 90, errorRatePct: 0.2 },
   { name: '/v1/images/generate', requests: 240, avgLatencyMs: 850, errorRatePct: 0.8 },
   { name: '/v1/models', requests: 600, avgLatencyMs: 40, errorRatePct: 0.05 },
+  { name: '/v1/audio/transcriptions', requests: 320, avgLatencyMs: 610, errorRatePct: 0.4 },
+  { name: '/v1/moderations', requests: 950, avgLatencyMs: 35, errorRatePct: 0.05 },
+  { name: '/v1/batches', requests: 80, avgLatencyMs: 1200, errorRatePct: 1.1 },
 ];
 
 const BACKGROUND_ALERTS: readonly { severity: AlertSeverity; message: string; highlight: string }[] = [
@@ -163,6 +166,9 @@ export function createInitialState(now: number, rng: () => number = Math.random)
   }
   return {
     ...state,
+    // Seeded with a short recent history, not just the connect event, so the Alerts
+    // page and the Dashboard's Recent-alerts teaser both look populated on first paint
+    // instead of empty until the first background event happens to fire.
     alerts: [
       {
         id: 'seed-1',
@@ -170,6 +176,41 @@ export function createInitialState(now: number, rng: () => number = Math.random)
         message: 'Dashboard connected — streaming live metrics',
         highlight: 'Dashboard connected',
         timestamp: now,
+      },
+      {
+        id: 'seed-2',
+        severity: 'info',
+        message: 'Deploy completed: model-router v2.3.1',
+        highlight: 'Deploy completed',
+        timestamp: now - 45_000,
+      },
+      {
+        id: 'seed-3',
+        severity: 'warning',
+        message: 'Approaching rate limit for org acme-corp',
+        highlight: 'Approaching rate limit',
+        timestamp: now - 3 * 60_000,
+      },
+      {
+        id: 'seed-4',
+        severity: 'info',
+        message: 'Autoscaler added 2 nodes to inference pool',
+        highlight: 'Autoscaler added 2 nodes',
+        timestamp: now - 6 * 60_000,
+      },
+      {
+        id: 'seed-5',
+        severity: 'critical',
+        message: 'p95 latency spike on /v1/images/generate',
+        highlight: 'p95 latency spike',
+        timestamp: now - 11 * 60_000,
+      },
+      {
+        id: 'seed-6',
+        severity: 'info',
+        message: 'Scheduled maintenance window completed with 0 rollbacks',
+        highlight: 'Scheduled maintenance window',
+        timestamp: now - 18 * 60_000,
       },
     ],
   };

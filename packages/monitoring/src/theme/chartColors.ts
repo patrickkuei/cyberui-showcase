@@ -47,9 +47,14 @@ export function useChartColors(): ChartColors {
 export function chartTooltipProps(colors: ChartColors): {
   labelFormatter: () => string;
   contentStyle: CSSProperties;
+  cursor: { fill: string; fillOpacity: number };
 } {
   return {
     labelFormatter: () => '',
     contentStyle: { background: 'var(--color-surface)', border: `1px solid ${colors.border}` },
+    // Recharts' BarChart tooltip defaults to an unstyled #ccc cursor rectangle spanning the
+    // full category width and chart height; without this it reads as a stray light-grey box
+    // against the dark theme.
+    cursor: { fill: colors.border, fillOpacity: 0.3 },
   };
 }
