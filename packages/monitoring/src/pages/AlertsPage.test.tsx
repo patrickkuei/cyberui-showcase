@@ -20,4 +20,20 @@ describe('AlertsPage', () => {
     render(<AlertsPage alerts={ALERTS} />);
     expect(screen.getAllByRole('heading', { name: 'Alerts' })).toHaveLength(1);
   });
+
+  it('shows a summary stat row with real severity counts (Review Focus #3)', () => {
+    const alerts = [
+      { id: '1', severity: 'critical' as const, message: 'a', timestamp: Date.now() },
+      { id: '2', severity: 'critical' as const, message: 'b', timestamp: Date.now() },
+      { id: '3', severity: 'warning' as const, message: 'c', timestamp: Date.now() },
+      { id: '4', severity: 'info' as const, message: 'd', timestamp: Date.now() },
+    ];
+    render(<AlertsPage alerts={alerts} />);
+    expect(screen.getByText('Total alerts')).toBeInTheDocument();
+    expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText('Critical')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('Warning')).toBeInTheDocument();
+    expect(screen.getByText('Info')).toBeInTheDocument();
+  });
 });
