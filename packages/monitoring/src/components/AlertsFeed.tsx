@@ -10,6 +10,8 @@ export interface AlertsFeedProps {
   limit?: number;
   /** Optional card heading; omit it when the surrounding page already names the feed. */
   title?: string;
+  /** Optional content rendered below the timeline (e.g. a "View all" link). */
+  footer?: ReactNode;
 }
 
 const SEVERITY_TO_STATUS: Record<Alert['severity'], NonNullable<TimelineEvent['status']>> = {
@@ -40,7 +42,7 @@ function renderTitle(alert: Alert): ReactNode {
   );
 }
 
-export function AlertsFeed({ alerts, now, limit = VISIBLE_ALERTS, title }: AlertsFeedProps) {
+export function AlertsFeed({ alerts, now, limit = VISIBLE_ALERTS, title, footer }: AlertsFeedProps) {
   const events: AlertTimelineEvent[] = alerts.slice(0, limit).map((alert) => ({
     title: renderTitle(alert),
     time: formatRelativeTime(alert.timestamp, now),
@@ -50,6 +52,7 @@ export function AlertsFeed({ alerts, now, limit = VISIBLE_ALERTS, title }: Alert
   return (
     <Card title={title}>
       <Timeline events={events as unknown as TimelineEvent[]} size="sm" />
+      {footer}
     </Card>
   );
 }

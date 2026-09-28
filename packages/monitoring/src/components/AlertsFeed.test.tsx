@@ -65,4 +65,15 @@ describe('AlertsFeed', () => {
     render(<AlertsFeed alerts={many} now={NOW} limit={3} />);
     expect(screen.getAllByText(/^Alert number \d+$/)).toHaveLength(3);
   });
+
+  it('renders an optional footer after the feed', () => {
+    render(
+      <AlertsFeed
+        alerts={[{ id: '1', severity: 'info' as const, message: 'Hello', timestamp: NOW }]}
+        now={NOW}
+        footer={<a href="#/alerts">View all alerts →</a>}
+      />,
+    );
+    expect(screen.getByRole('link', { name: 'View all alerts →' })).toBeInTheDocument();
+  });
 });

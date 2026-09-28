@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Card, Table } from 'cyberui-2045';
 import type { TableColumn } from 'cyberui-2045';
 import type { EndpointStats } from '../data/simulation';
@@ -14,9 +15,11 @@ export interface EndpointTableProps {
   endpoints: EndpointStats[];
   /** Optional card heading; omit it when the surrounding page already names the table. */
   title?: string;
+  /** Optional content rendered below the table (e.g. a "View all" link). */
+  footer?: ReactNode;
 }
 
-export function EndpointTable({ endpoints, title }: EndpointTableProps) {
+export function EndpointTable({ endpoints, title, footer }: EndpointTableProps) {
   return (
     <Card title={title}>
       <Table
@@ -25,6 +28,7 @@ export function EndpointTable({ endpoints, title }: EndpointTableProps) {
         getRowId={(row) => row.name}
         caption="Per-endpoint request volume, latency, and error rate"
       />
+      {footer}
     </Card>
   );
 }

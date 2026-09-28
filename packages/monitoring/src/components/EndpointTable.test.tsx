@@ -23,4 +23,14 @@ describe('EndpointTable', () => {
     render(<EndpointTable endpoints={ENDPOINTS} title="Top routes" />);
     expect(screen.getByRole('heading', { name: 'Top routes' })).toBeInTheDocument();
   });
+
+  it('renders an optional footer after the table', () => {
+    render(
+      <EndpointTable
+        endpoints={[{ name: '/v1/models', requests: 100, avgLatencyMs: 10, errorRatePct: 0.1 }]}
+        footer={<a href="#/endpoints">View all endpoints →</a>}
+      />,
+    );
+    expect(screen.getByRole('link', { name: 'View all endpoints →' })).toBeInTheDocument();
+  });
 });
