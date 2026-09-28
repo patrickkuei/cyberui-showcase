@@ -26,8 +26,9 @@ export default function App() {
   // Same 2% threshold the Error rate tile uses, so badge and tile never disagree.
   const isHealthy = state.errorRatePct <= 2;
 
-  const previousRequestRate = state.requestVolume[state.requestVolume.length - 2]?.value ?? state.requestsPerSec;
-  const requestTrend = describeRequestRate(state.requestsPerSec, previousRequestRate);
+  // requestVolume's last point is the current value, so the baseline is the 5 points before it.
+  const recentRequestRates = state.requestVolume.slice(-6, -1).map((p) => p.value);
+  const requestTrend = describeRequestRate(state.requestsPerSec, recentRequestRates);
   const latencyTrend = describeLatency(state.p95LatencyMs);
   const errorTrend = describeErrorRate(state.errorRatePct);
 
