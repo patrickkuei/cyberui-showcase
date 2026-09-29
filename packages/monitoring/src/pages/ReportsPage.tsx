@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Button, Table } from 'cyberui-2045';
+import { Card, Button, Table, Pagination } from 'cyberui-2045';
 import type { TableColumn } from 'cyberui-2045';
 import { MAX_ALERTS, type Alert, type EndpointStats } from '../data/simulation';
 import { formatCompactNumber, formatRelativeTime } from '../utils/format';
@@ -13,6 +13,8 @@ export interface ReportsPageProps {
 
 /** The audit log lists every event the simulation keeps in memory. */
 const AUDIT_LIMIT = MAX_ALERTS;
+/** Rows per audit-log page — MAX_ALERTS rows all at once made the card grow tall as the log filled up. */
+const AUDIT_PAGE_SIZE = 5;
 
 const AUDIT_COLUMNS: TableColumn<Alert>[] = [
   { key: 'timestamp', header: 'Time', render: (row) => formatRelativeTime(row.timestamp, Date.now()) },
@@ -30,6 +32,7 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
   const [exported, setExported] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [compliancePackDownloaded, setCompliancePackDownloaded] = useState(false);
+  const [auditPage, setAuditPage] = useState(1);
 
   const estimatedDailyRequests = requestsPerSec * 60 * 60 * 24;
   const estimatedDailyCost = latestCostPerHr * 24;
@@ -39,6 +42,18 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
     ...endpoint,
     estCost: totalRequests > 0 ? (endpoint.requests / totalRequests) * estimatedDailyCost : 0,
   }));
+
+  const auditableAlerts = alerts.slice(0, AUDIT_LIMIT);
+  const auditTotalPages = Math.max(1, Math.ceil(auditableAlerts.length / AUDIT_PAGE_SIZE));
+  // Clamped rather than reset via an effect: the log only grows, so this only ever
+  // matters on the very first render, before state has had a chance to be invalid.
+  const auditCurrentPage = Math.min(auditPage, auditTotalPages);
+  const auditPageAlerts = auditableAlerts.slice(
+    (auditCurrentPage - 1) * AUDIT_PAGE_SIZE,
+    auditCurrentPage * AUDIT_PAGE_SIZE,
+  );
+  const auditRangeStart = auditableAlerts.length === 0 ? 0 : (auditCurrentPage - 1) * AUDIT_PAGE_SIZE + 1;
+  const auditRangeEnd = Math.min(auditCurrentPage * AUDIT_PAGE_SIZE, auditableAlerts.length);
 
   return (
     <>
@@ -50,7 +65,7 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
       {/* Summary row: the finance headline and the compliance headline, side by side on wide screens. */}
       <div className="report-row">
         <section aria-label="Usage report">
-          <Card title="Usage report">
+          <Card title="Usage report" className="panel-surface">
             <div className="report-stats">
               <div className="report-stat">
                 <span className="report-stat-label">Requests (est., 24h)</span>
@@ -74,7 +89,7 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
         </section>
 
         <section aria-label="Compliance">
-          <Card title="Compliance">
+          <Card title="Compliance" className="panel-surface">
             <div className="report-stats">
               <div className="report-stat">
                 <span className="report-stat-label">Uptime (30d, est.)</span>
@@ -103,7 +118,7 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
 
       {/* Detail tables follow the summary row's order: finance (cost) first, then compliance (audit). */}
       <section aria-label="Cost by endpoint">
-        <Card title="Cost by endpoint">
+        <Card title="Cost by endpoint" className="panel-surface">
           <Table
             columns={COST_COLUMNS}
             data={endpointsWithCost}
@@ -114,13 +129,24 @@ export function ReportsPage({ requestsPerSec, latestCostPerHr, alerts, endpoints
       </section>
 
       <section aria-label="Audit log">
-        <Card title="Audit log">
+        <Card title="Audit log" className="panel-surface">
           <Table
             columns={AUDIT_COLUMNS}
-            data={alerts.slice(0, AUDIT_LIMIT)}
+            data={auditPageAlerts}
             getRowId={(row) => row.id}
-            caption={`${Math.min(alerts.length, AUDIT_LIMIT)} of ${alerts.length} logged events`}
+            caption={`${auditRangeStart}-${auditRangeEnd} of ${alerts.length} logged events`}
           />
+          {auditTotalPages > 1 && (
+            <Pagination
+              currentPage={auditCurrentPage}
+              totalPages={auditTotalPages}
+              onPageChange={setAuditPage}
+              size="sm"
+              variant="secondary"
+              ariaLabel="Audit log pages"
+              className="audit-pagination"
+            />
+          )}
           <div className="report-card-footer">
             {!downloaded ? (
               <Button variant="secondary" size="sm" onClick={() => setDownloaded(true)}>

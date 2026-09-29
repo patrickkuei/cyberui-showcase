@@ -12,7 +12,7 @@ export function LatencyChart({ data }: LatencyChartProps) {
   const colors = useChartColors();
 
   return (
-    <Card variant="default">
+    <Card variant="default" className="panel-surface">
       <h3 className="panel-title">Latency percentiles</h3>
       <div style={{ height: 220 }}>
         <ResponsiveContainer width="100%" height="100%">

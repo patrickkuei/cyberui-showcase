@@ -15,7 +15,7 @@ export function RequestVolumeChart({ data, range, onRangeChange }: RequestVolume
   const colors = useChartColors();
 
   return (
-    <Card variant="default">
+    <Card variant="default" className="panel-surface">
       <div className="chart-card-header">
         <h3 className="panel-title">Request volume</h3>
         <ChartRangeToggle value={range} onChange={onRangeChange} />

@@ -30,6 +30,20 @@ body {
   background: var(--color-base);
 }
 
+/*
+ * cyberui-2045's Card renders bg-base by default — the same token as the page
+ * background above, so every card blends into the page and into every other
+ * card. Overriding background-color directly (not redefining --color-base
+ * itself) keeps this scoped to the Card element it's applied to: Table and
+ * Button both use bg-base internally for their own two-tone chrome, and
+ * that would leak in too if this were done by reassigning the variable.
+ * Tailwind's utilities live in an unlayered `@layer utilities`, so this
+ * plain, unlayered rule wins regardless of selector order.
+ */
+.panel-surface {
+  background-color: var(--color-surface);
+}
+
 /* ---- Page header (per route) ------------------------------------------ */
 
 /*
@@ -473,6 +487,10 @@ body {
 }
 
 .report-card-footer {
+  margin-top: 1rem;
+}
+
+.audit-pagination {
   margin-top: 1rem;
 }
 

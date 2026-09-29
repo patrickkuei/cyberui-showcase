@@ -50,7 +50,7 @@ export function AlertsFeed({ alerts, now, limit = VISIBLE_ALERTS, title, footer 
   }));
 
   return (
-    <Card title={title}>
+    <Card title={title} className="panel-surface">
       <Timeline events={events as unknown as TimelineEvent[]} size="sm" />
       {footer}
     </Card>

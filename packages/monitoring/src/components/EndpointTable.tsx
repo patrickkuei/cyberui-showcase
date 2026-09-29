@@ -21,7 +21,7 @@ export interface EndpointTableProps {
 
 export function EndpointTable({ endpoints, title, footer }: EndpointTableProps) {
   return (
-    <Card title={title}>
+    <Card title={title} className="panel-surface">
       <Table
         columns={COLUMNS}
         data={endpoints}

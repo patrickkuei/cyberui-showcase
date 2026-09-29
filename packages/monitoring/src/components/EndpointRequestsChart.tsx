@@ -12,7 +12,7 @@ export function EndpointRequestsChart({ endpoints }: EndpointRequestsChartProps)
   const colors = useChartColors();
 
   return (
-    <Card title="Requests by endpoint">
+    <Card title="Requests by endpoint" className="panel-surface">
       <div style={{ height: 280 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={endpoints} margin={{ bottom: 24 }}>

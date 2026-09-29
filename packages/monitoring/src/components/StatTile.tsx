@@ -19,7 +19,7 @@ const TONE_VAR: Record<NonNullable<StatTileProps['tone']>, string> = {
 
 export function StatTile({ label, value, tone = 'default', icon, status, statusTone = 'default' }: StatTileProps) {
   return (
-    <Card title={label} variant="small" titleBorder={false}>
+    <Card title={label} variant="small" titleBorder={false} className="panel-surface">
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {icon && (
           <span style={{ color: 'var(--color-secondary)', display: 'inline-flex' }} aria-hidden="true">

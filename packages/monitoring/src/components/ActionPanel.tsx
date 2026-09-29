@@ -27,7 +27,7 @@ export function ActionPanel({ incidentKey, headline, headlineTone, primaryAction
   }
 
   return (
-    <Card title="What needs attention" className="action-panel">
+    <Card title="What needs attention" className="action-panel panel-surface">
       {primaryActionLabel && (
         <div className="action-item">
           <span className="action-dot" style={{ background: TONE_VAR[headlineTone] }} aria-hidden="true" />
