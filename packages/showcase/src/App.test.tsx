@@ -26,4 +26,10 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByRole('navigation')).not.toHaveClass('site-nav-solid');
   });
+
+  it('renders the gallery index for #/gallery', () => {
+    window.location.hash = '#/gallery';
+    render(<App />);
+    expect(screen.getByRole('heading', { name: 'All demos' })).toBeInTheDocument();
+  });
 });
