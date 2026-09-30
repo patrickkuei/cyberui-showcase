@@ -319,3 +319,28 @@ body {
 .site-nav-links a:focus-visible {
   color: var(--color-secondary);
 }
+
+/* ---- Demo tiles (Gallery index) ---- */
+
+.demo-tile-image {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.demo-tile-tagline {
+  margin: 0 0 1.25rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.demo-tile-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.demo-tile-dimmed {
+  opacity: 0.6;
+}
