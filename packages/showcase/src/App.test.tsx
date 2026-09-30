@@ -32,4 +32,10 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByRole('heading', { name: 'All demos' })).toBeInTheDocument();
   });
+
+  it('renders the process page for #/process', () => {
+    window.location.hash = '#/process';
+    render(<App />);
+    expect(screen.getByRole('heading', { name: 'How we design' })).toBeInTheDocument();
+  });
 });
