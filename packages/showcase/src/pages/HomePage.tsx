@@ -1,10 +1,17 @@
 import { Button, GradientText } from 'cyberui-2045';
 import { HeroScene } from '../components/HeroScene';
 import { LiveReadout } from '../components/LiveReadout';
+import { GALLERY_ITEMS } from '../data/galleryItems';
 
 function goToGallery() {
   window.location.hash = '#/gallery';
 }
+
+// Derived from GALLERY_ITEMS (not hardcoded) so this sentence doesn't go
+// stale the moment a second demo ships.
+const liveCount = GALLERY_ITEMS.filter((item) => item.status === 'live').length;
+const comingSoonCount = GALLERY_ITEMS.length - liveCount;
+const closingCtaText = `${liveCount} demo${liveCount === 1 ? '' : 's'} live today, ${comingSoonCount} more on the way.`;
 
 export function HomePage() {
   return (
@@ -39,7 +46,7 @@ export function HomePage() {
       </section>
 
       <section className="home-closing-cta">
-        <p>One demo live today, four more on the way.</p>
+        <p>{closingCtaText}</p>
         <Button variant="primary" onClick={goToGallery}>
           View the gallery
         </Button>
