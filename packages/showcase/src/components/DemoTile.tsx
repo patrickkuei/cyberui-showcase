@@ -20,10 +20,17 @@ export function DemoTile({ item, size }: DemoTileProps) {
   // For coming-soon tiles, scope accent to neutral to ensure Image's
   // inherent border-accent/30 renders as subtle neutral chrome instead
   // of falling back to the library's raw yellow default.
+  // --color-secondary is NOT just a glow color: Card reads it for its
+  // <h3> title text color, and Badge variant="secondary" reads it as the
+  // badge's own background (with text-inverse on top). So the coming-soon
+  // branch deliberately points --color-secondary at --color-muted (a
+  // light neutral text token), not at --color-border-default like accent
+  // — reusing the dark border token here nearly wiped out the demo name
+  // and the "Coming soon" badge against the dark page background.
   const accentStyle = (
     live
       ? { '--color-accent': item.accentHex, '--color-secondary': item.accentHex }
-      : { '--color-accent': 'var(--color-border-default)', '--color-secondary': 'var(--color-border-default)' }
+      : { '--color-accent': 'var(--color-border-default)', '--color-secondary': 'var(--color-muted)' }
   ) as CSSProperties;
 
   return (
