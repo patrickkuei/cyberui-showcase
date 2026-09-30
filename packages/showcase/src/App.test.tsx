@@ -14,4 +14,16 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByRole('heading', { name: 'AI Product Monitoring' })).toBeInTheDocument();
   });
+
+  it('renders the nav solid immediately on non-home routes (Review Focus #3)', () => {
+    window.location.hash = '#/gallery/monitoring';
+    render(<App />);
+    expect(screen.getByRole('navigation')).toHaveClass('site-nav-solid');
+  });
+
+  it('renders the nav transparent over the hero on Home, until scrolled', () => {
+    window.location.hash = '';
+    render(<App />);
+    expect(screen.getByRole('navigation')).not.toHaveClass('site-nav-solid');
+  });
 });
