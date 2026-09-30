@@ -276,3 +276,46 @@ body {
     row-gap: 0.4rem;
   }
 }
+
+/* ---- Site nav ---- */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1.25rem, 4vw, 2rem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.site-nav-solid {
+  background: var(--color-base);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.site-nav-brand {
+  color: var(--color-default);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.site-nav-links a {
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.site-nav-links a:hover,
+.site-nav-links a:focus-visible {
+  color: var(--color-secondary);
+}
