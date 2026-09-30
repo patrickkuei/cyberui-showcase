@@ -23,13 +23,16 @@ beforeEach(() => {
 
 describe('ProcessPage', () => {
   it('renders all three acts with their stage titles', () => {
-    render(<ProcessPage />);
+    const { container } = render(<ProcessPage />);
     expect(screen.getByRole('heading', { name: 'Before the pixels' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Where cyberui-2045 takes over' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: "Proving it's real" })).toBeInTheDocument();
     expect(screen.getByText('Discovery')).toBeInTheDocument();
     expect(screen.getByText('Visual Direction')).toBeInTheDocument();
     expect(screen.getByText('Handoff')).toBeInTheDocument();
+    // Verify all three act wrapper divs have the process-reveal-visible class
+    // (catch regressions in useRevealOnScroll returning visible: false)
+    expect(container.querySelectorAll('.process-reveal-visible')).toHaveLength(3);
   });
 
   it('is honest that cyberui-2045 only covers four of the ten stages', () => {
