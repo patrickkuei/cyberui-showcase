@@ -645,3 +645,24 @@ body {
   color: var(--color-muted);
   line-height: 1.55;
 }
+
+/* ---- Code block provenance line + wrapped variant (used by /process evidence) ---- */
+
+.code-block pre.code-block-wrap code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code-block-source {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.code-block-source a {
+  color: var(--color-secondary);
+}
+
+.code-block-source code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
