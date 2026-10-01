@@ -21,7 +21,8 @@ export function CodeViewer({ snippets }: CodeViewerProps) {
             <p className="code-block-source">
               {snippet.sourceHref && (
                 <a href={snippet.sourceHref} target="_blank" rel="noreferrer">
-                  Full file ↗
+                  Full file <span aria-hidden="true">↗</span>
+                  <span className="visually-hidden"> (opens in new tab)</span>
                 </a>
               )}
               {snippet.sourceHref && snippet.asOf && ' · '}

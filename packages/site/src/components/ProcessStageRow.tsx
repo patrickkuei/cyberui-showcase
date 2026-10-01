@@ -55,10 +55,12 @@ export function ProcessStageRow({ stage }: ProcessStageRowProps) {
         ) : (
           <figure className="code-block process-evidence-image">
             <figcaption>{evidence.source.label}</figcaption>
-            <img src={evidence.src} alt={evidence.alt} loading="lazy" />
+            {/* width/height are the PNG's intrinsic pixels: the browser reserves the box before the lazy image loads (CSS keeps it responsive with height: auto), so the row does not grow on load. */}
+            <img src={evidence.src} alt={evidence.alt} width={1265} height={521} loading="lazy" />
             <p className="code-block-source">
               <a href={sourceUrl(evidence.source.path)} target="_blank" rel="noreferrer">
-                Source ↗
+                Source <span aria-hidden="true">↗</span>
+                <span className="visually-hidden"> (opens in new tab)</span>
               </a>
               {' · '}as of <code>{evidence.asOf}</code>
             </p>

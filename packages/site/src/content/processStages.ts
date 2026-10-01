@@ -157,7 +157,7 @@ const STAGE_COPY: readonly StageCopy[] = [
     title: 'Handoff',
     owner: 'you',
     summary:
-      'The code is the handoff. The design spec and implementation plan, linked here, were given to the agents that built the site, and the work shipped as 14 reviewed pull requests (#13 to #26). With cyberui-2045 components there is no separate specification to translate into code.',
+      'The code is the handoff. The implementation plan, linked here, and the design spec behind it were given to the agents that built the site, and the work shipped as 14 reviewed pull requests (#13 to #26). With cyberui-2045 components there is no separate specification to translate into code.',
   },
 ];
 

@@ -76,6 +76,14 @@ describe('ProcessStageRow', () => {
     );
   });
 
+  it('gives the screenshot its intrinsic size so the row does not grow when the lazy image loads', () => {
+    stubIntersectionObserver('immediate');
+    renderRow(7);
+    const img = screen.getByAltText(/Home page hero/);
+    expect(img).toHaveAttribute('width', '1265');
+    expect(img).toHaveAttribute('height', '521');
+  });
+
   it('keeps all text in the DOM before the row is revealed, so reveal never changes the layout', () => {
     stubIntersectionObserver('never');
     const { container } = renderRow(1);

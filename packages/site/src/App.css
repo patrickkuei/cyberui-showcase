@@ -627,7 +627,14 @@ body {
 }
 
 .code-block-source a {
-  color: var(--color-secondary);
+  color: var(--color-default);
+  text-decoration: underline;
+}
+
+/* Only the included act gets cyan links; the site never redefines
+   --color-secondary, so using it here would paint every act cyan. */
+.process-act-included .code-block-source a {
+  color: var(--process-accent);
 }
 
 .code-block-source code {
@@ -802,6 +809,15 @@ body {
   opacity: 0;
 }
 
+/* A keyboard user can tab to a link inside a row that has not revealed yet.
+   Focus must never land on something invisible (WCAG 2.4.7), so focus forces
+   the row fully visible. Specificity (0,4,0) beats the hiding rules (0,3,0). */
+.process-stage[data-reveal]:focus-within .process-stage-node,
+.process-stage[data-reveal]:focus-within .process-stage-header,
+.process-stage[data-reveal]:focus-within .process-stage-body {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .process-stage-node,
   .process-stage-header,
@@ -832,15 +848,28 @@ body {
 }
 
 /* The only place on /process where the accent leaks into the library's own
-   tokens: inside the included act, Badge variant="accent" and Badge
-   variant="secondary" paint cyan, and the nodes glow (below). */
+   tokens: inside the included act only --color-accent is scoped. It paints
+   the "Included" accent Badge and the nodes' glow (below). */
 .process-act-included {
   --color-accent: var(--process-accent);
-  --color-secondary: var(--process-accent);
 }
 
 .process-act-included .process-stage-node {
   background: var(--process-accent);
   border-color: var(--process-accent);
   box-shadow: 0 0 10px var(--process-accent);
+}
+
+/* ---- Visually hidden text (screen-reader only) ---- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

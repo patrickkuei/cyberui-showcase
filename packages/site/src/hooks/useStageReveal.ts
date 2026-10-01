@@ -16,6 +16,14 @@ const RANK: Record<RevealStage, number> = { pending: 0, header: 1, full: 2 };
  * Two-step, one-way reveal for a long page of stacked rows:
  *   pending -> header (the row has risen into view) -> full (it reached the reading zone).
  *
+ * 'full' has two triggers: the row's top enters the reading zone, OR the row
+ * is entirely visible. The second exists for the last row on the page: at
+ * maximum scroll its top can sit below the reading zone on a tall viewport
+ * (the page cannot scroll further), so the reading-zone trigger alone would
+ * leave its body at opacity 0 forever. A short row at the page end is fully
+ * visible, so the second trigger covers it; a tall row still reaches the
+ * reading zone by scrolling.
+ *
  * This hook only reports a stage; the caller must animate OPACITY ONLY and
  * keep the row's height constant in every stage. Changing height while
  * someone scrolls makes the content under their eyes jump.
@@ -32,6 +40,7 @@ export function useStageReveal<T extends HTMLElement>(): { ref: RefObject<T | nu
 
   useEffect(() => {
     if (reducedMotion || !canObserve) {
+      // Covers prefers-reduced-motion switching on while the page is open (the initial state only covers mount).
       setStage('full');
       return;
     }
@@ -51,7 +60,11 @@ export function useStageReveal<T extends HTMLElement>(): { ref: RefObject<T | nu
       return observer;
     };
 
-    const observers = [watch('header'), watch('full', { rootMargin: READING_ZONE_MARGIN })];
+    const observers = [
+      watch('header'),
+      watch('full', { rootMargin: READING_ZONE_MARGIN }),
+      watch('full', { threshold: 1 }), // row fully visible: see the doc comment above
+    ];
     return () => observers.forEach((observer) => observer.disconnect());
   }, [reducedMotion, canObserve]);
 

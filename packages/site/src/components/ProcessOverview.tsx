@@ -16,16 +16,14 @@ export function ProcessOverview({ stages }: ProcessOverviewProps) {
     <figure className="process-overview">
       <ol className="process-overview-strip">
         {stages.map((stage) => (
-          <li
-            key={stage.number}
-            data-owner={stage.owner}
-            aria-label={`Stage ${stage.number}: ${stage.title}, ${OWNER_LABEL[stage.owner]}`}
-          >
+          <li key={stage.number} data-owner={stage.owner}>
             <span aria-hidden="true">{String(stage.number).padStart(2, '0')}</span>
+            {/* Real text rather than aria-label on the <li>: a label on a bare list item is unreliable across screen readers. */}
+            <span className="visually-hidden">{`Stage ${stage.number}: ${stage.title}, ${OWNER_LABEL[stage.owner]}`}</span>
           </li>
         ))}
       </ol>
-      <p className="process-overview-legend">
+      <figcaption className="process-overview-legend">
         <span>
           <i className="process-overview-swatch process-overview-swatch-you" aria-hidden="true" />
           {OWNER_LABEL.you}
@@ -34,7 +32,7 @@ export function ProcessOverview({ stages }: ProcessOverviewProps) {
           <i className="process-overview-swatch process-overview-swatch-library" aria-hidden="true" />
           {OWNER_LABEL.library}
         </span>
-      </p>
+      </figcaption>
     </figure>
   );
 }

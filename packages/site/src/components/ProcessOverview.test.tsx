@@ -18,8 +18,8 @@ describe('ProcessOverview', () => {
     const included = items.filter((li) => li.getAttribute('data-owner') === 'library');
     expect(included).toHaveLength(4);
     // Each segment carries its stage, title and owner as text for assistive tech.
-    expect(items[4]).toHaveAttribute('aria-label', 'Stage 5: Visual Direction, Included');
-    expect(items[0]).toHaveAttribute('aria-label', 'Stage 1: Discovery, Your decision');
+    expect(items[4]).toHaveTextContent('Stage 5: Visual Direction, Included');
+    expect(items[0]).toHaveTextContent('Stage 1: Discovery, Your decision');
   });
 
   it('explains both kinds of segment in a legend', () => {

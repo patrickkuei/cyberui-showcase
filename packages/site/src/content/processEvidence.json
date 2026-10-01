@@ -18,7 +18,7 @@
     },
     "asOf": "c0c11b6",
     "excerpt": [
-      "- A real demo screenshot as the hero — redundant with Gallery, and undersells the hero's actual job (mood/identity, not proof — proof comes seconds later in Gallery).",
+      "  - A real demo screenshot as the hero — redundant with Gallery, and undersells the hero's actual job (mood/identity, not proof — proof comes seconds later in Gallery).",
       "  - A commissioned/sourced static illustration or a designed logo mark — real asset-production cost with no existing brand mark to build from; inconsistent with this being a solo-maintainer, no-deadline project (same reasoning that ruled out the AI-remix feature in the original spec).",
       "  - A plain grid-horizon + glow scene — closer to the generic \"dark mode + one accent glow\" AI-design cliché than the halftone approach; halftone/screentone is a concrete, referenceable cyberpunk-manga vernacular detail (Akira/Ghost in the Shell-era print aesthetic), not generic decoration."
     ],
@@ -96,7 +96,7 @@
     },
     "asOf": "c0c11b6",
     "src": "./screenshots/home-hero.png",
-    "alt": "The Home page hero: a cyan halftone glow behind the headline \"Built by AI. Ready for yours.\""
+    "alt": "The Home page hero as built: a faint field of teal halftone dots on a dark background, the headline \"Built by AI. Ready for yours.\" in a yellow-to-cyan gradient, and a \"Pick a starting point\" button."
   },
   "8": {
     "kind": "excerpt",

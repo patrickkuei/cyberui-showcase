@@ -26,8 +26,11 @@ function Probe() {
 }
 
 const stageOf = () => screen.getByTestId('probe').getAttribute('data-stage');
-const headerObserver = () => ControlledObserver.instances.find((o) => !o.options?.rootMargin)!;
+// Each observer is identified explicitly by the options it was created with.
+const headerObserver = () =>
+  ControlledObserver.instances.find((o) => o.options?.rootMargin === undefined && o.options?.threshold === undefined)!;
 const readingObserver = () => ControlledObserver.instances.find((o) => o.options?.rootMargin === READING_ZONE_MARGIN)!;
+const fullyVisibleObserver = () => ControlledObserver.instances.find((o) => o.options?.threshold === 1)!;
 
 afterEach(() => {
   ControlledObserver.instances = [];
@@ -43,6 +46,23 @@ describe('useStageReveal', () => {
     act(() => headerObserver().fire());
     expect(stageOf()).toBe('header');
     act(() => readingObserver().fire());
+    expect(stageOf()).toBe('full');
+  });
+
+  it('creates exactly three observers: header, reading zone, fully visible', () => {
+    vi.stubGlobal('IntersectionObserver', ControlledObserver);
+    render(<Probe />);
+    expect(ControlledObserver.instances).toHaveLength(3);
+    expect(headerObserver()).toBeDefined();
+    expect(readingObserver()).toBeDefined();
+    expect(fullyVisibleObserver()).toBeDefined();
+  });
+
+  it('goes straight to full when the row is fully visible, even if it never reaches the reading zone', () => {
+    vi.stubGlobal('IntersectionObserver', ControlledObserver);
+    render(<Probe />);
+    expect(stageOf()).toBe('pending');
+    act(() => fullyVisibleObserver().fire());
     expect(stageOf()).toBe('full');
   });
 
