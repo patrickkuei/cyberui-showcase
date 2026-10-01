@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "description": "Real-world example apps built with cyberui-2045",
   "license": "MIT",
+  "scripts": {
+    "check:process-excerpts": "node scripts/check-process-excerpts.mjs",
+    "test:scripts": "node --test scripts/check-process-excerpts.test.mjs"
+  },
   "packageManager": "pnpm@10.34.2",
   "engines": {
     "node": ">=20"
