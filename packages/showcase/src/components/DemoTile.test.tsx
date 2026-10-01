@@ -37,4 +37,13 @@ describe('DemoTile', () => {
       'var(--color-border-default)'
     );
   });
+
+  it('keeps coming-soon title/badge text readable by scoping --color-secondary to --color-muted, not the dark border token', () => {
+    const item = getGalleryItem('agent-panel')!;
+    const { container } = render(<DemoTile item={item} size="small" />);
+    const card = container.querySelector('.demo-tile.demo-tile-small');
+    expect((card as HTMLElement).style.getPropertyValue('--color-secondary')).toBe(
+      'var(--color-muted)'
+    );
+  });
 });

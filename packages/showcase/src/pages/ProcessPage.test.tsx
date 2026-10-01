@@ -3,10 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { ProcessPage } from './ProcessPage';
 
 beforeEach(() => {
-  // happy-dom doesn't implement IntersectionObserver; this stub reports
-  // every observed element as immediately visible, matching real-browser
-  // behavior for content already in the viewport when observe() runs —
-  // see Review Focus #2 and useRevealOnScroll's own comment.
+  // happy-dom's IntersectionObserver is a no-op that never fires its
+  // callback, so this stub reports every observed element as immediately
+  // visible, matching real-browser behavior for content already in the
+  // viewport when observe() runs — see Review Focus #2 and
+  // useRevealOnScroll's own comment.
   class StubIntersectionObserver {
     constructor(private callback: IntersectionObserverCallback) {}
     observe(target: Element) {
