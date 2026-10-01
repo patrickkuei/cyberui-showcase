@@ -1,0 +1,647 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--color-base);
+  color: var(--color-default);
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Page frame: a full-width grid with a centered content column (max 1216px,
+   never closer to the viewport edge than --shell-pad). Ordinary page content
+   sits in the "content" column; the Home hero spans "full" to bleed to
+   both edges. A grid does this without the 100vw + negative-margin trick,
+   which is off by the scrollbar's width and left the hero's text a few px
+   out of line with everything below it. */
+.shell {
+  --shell-pad: clamp(1.25rem, 4vw, 2rem);
+  /* Vertical spacing scale. Every gap on Home picks one of these, so rhythm
+     is a decision, not a per-rule guess: tight = a label and what it
+     labels; stack = items inside one section; block = between a section's
+     parts; section = between sections. */
+  --space-tight: 0.5rem;
+  --space-stack: 1rem;
+  --space-block: 1.75rem;
+  --space-section: clamp(3rem, 7vw, 4.5rem);
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--shell-pad), 1fr)
+    [content-start] minmax(0, 1216px)
+    [content-end] minmax(var(--shell-pad), 1fr)
+    [full-end];
+  padding-block: clamp(1.5rem, 4vw, 3.5rem) var(--space-section);
+}
+
+.shell > * {
+  grid-column: content;
+  min-width: 0;
+}
+
+/* ---- Home / hero ---- */
+
+.shell > .home {
+  grid-column: full;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--space-section);
+  align-content: start;
+}
+
+.home > * {
+  grid-column: content;
+}
+
+.home > .hero {
+  grid-column: full;
+}
+
+.hero {
+  /* Full-bleed: spans the whole viewport so the halftone scene reaches both
+     edges, while .hero-content (below) sits in the same content column as
+     the sections under it. The scrim (.hero::after) keeps the headline
+     readable. */
+  --hero-glow-room: 2.5rem;
+  margin-bottom: calc(-1 * var(--hero-glow-room));
+  position: relative;
+  min-height: min(70vh, 520px);
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: end;
+  overflow: hidden;
+  background: var(--color-base);
+}
+
+.hero::after {
+  /* A full-width scrim, not a boxed background on .hero-content — a
+     background scoped to .hero-content's own width would only fade
+     vertically (linear-gradient can't feather its own left/right edges),
+     leaving a visible hard-edged rectangle cut into the dot pattern. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, var(--color-base) 15%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  grid-column: content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-block);
+  /* Bottom room lets the button's hover glow render: .hero clips overflow
+     (the scene must not bleed), so the glow needs space inside it. .hero
+     gets the same amount back as negative margin, so the section rhythm
+     doesn't change. */
+  padding-block: var(--space-block) var(--hero-glow-room);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-block);
+}
+
+.home-intro h2 {
+  /* A heading sits closer to its own paragraph than blocks sit to each
+     other: pulls the section's block gap in to the stack gap. */
+  margin: 0 0 calc(var(--space-stack) - var(--space-block));
+  font-size: 1.5rem;
+}
+
+/* Prose stays at a readable line length; the stats panel below is the one
+   thing in this section that spans the full content column. */
+.home-intro p,
+.home-features {
+  max-width: 42rem;
+}
+
+.home-intro p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.home-features {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack);
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+
+/* Stats panel: a bordered spec-sheet grid. Cells are separated by 1px lines
+   (the grid's gap shows the border color through), and each cell carries a
+   faint halftone corner — the hero's dot motif, in neutral tones, so this
+   reads as part of the same page without spending any neon. */
+.library-stats {
+  margin: 0;
+}
+
+.library-stats-list {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-border-default);
+}
+
+.library-stats-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.75rem;
+  min-height: 8.5rem;
+  padding: 1.1rem 1.4rem 1.25rem;
+  background: var(--color-base);
+}
+
+.library-stats-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
+  background-size: 10px 10px;
+  -webkit-mask-image: linear-gradient(to bottom left, #000, transparent 65%);
+  mask-image: linear-gradient(to bottom left, #000, transparent 65%);
+  pointer-events: none;
+}
+
+.library-stats-label {
+  position: relative;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.library-stats-value {
+  position: relative;
+  margin: 0;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-default);
+}
+
+.library-stats-caption {
+  margin-top: var(--space-stack);
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+/* The palette cell: the library's five main colors as flat chips. */
+.library-stats-swatches {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin: 0;
+}
+
+.library-stats-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.library-stats-chip {
+  width: 3.25rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-default);
+}
+
+.library-stats-hex {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+@media (max-width: 720px) {
+  .library-stats-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .library-stats-palette {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Template detail page ---- */
+
+.template-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.back-link {
+  align-self: flex-start;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.back-link:hover {
+  color: var(--color-secondary);
+}
+
+.back-link:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.template-page-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.template-page-header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+}
+
+.template-page-tagline {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.template-page-body {
+  margin-top: 0.5rem;
+}
+
+.preview-frame {
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.preview-frame::before {
+  content: '';
+  display: block;
+  height: 2rem;
+  background: var(--color-base);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.preview-frame iframe {
+  display: block;
+  width: 100%;
+  height: min(70vh, 720px);
+  border: 0;
+  background: var(--color-base);
+}
+
+/* ---- Code tab + case study "Key snippet" ---- */
+
+.code-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.code-viewer-empty {
+  color: var(--color-muted);
+}
+
+.code-block {
+  margin: 0;
+}
+
+.code-block figcaption {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-bottom: 0.5rem;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.code-block code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-default);
+  white-space: pre;
+}
+
+.code-block-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+  max-width: 68ch;
+}
+
+/* ---- Case study ---- */
+
+.case-study {
+  max-width: 68ch;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.case-study-lede {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-default);
+}
+
+.case-study-section h2 {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.case-study-decisions {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.case-study-decision dt {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.case-study-decision dd {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.case-study-takeaways {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .template-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---- Site nav ---- */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1.25rem, 4vw, 2rem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.site-nav-solid {
+  background: var(--color-base);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.site-nav-brand {
+  color: var(--color-default);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.site-nav-links a {
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.site-nav-links a:hover,
+.site-nav-links a:focus-visible {
+  color: var(--color-secondary);
+}
+
+/* ---- Template tiles (Templates index) ---- */
+
+.template-tile-image {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.template-tile-tagline {
+  margin: 0 0 1.25rem;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.template-tile-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.template-tile-dimmed {
+  opacity: 0.6;
+}
+
+/* ---- Templates index ---- */
+
+.templates-index {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.templates-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-auto-rows: min-content;
+  gap: 1.25rem;
+}
+
+.template-tile-large {
+  grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+  .template-tile-large {
+    grid-column: span 1;
+  }
+}
+
+/* ---- Hero scene (Home only) ---- */
+
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 1;
+}
+
+.hero-scene-halftone {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-scene-animated {
+  animation: hero-scene-develop 900ms ease-out;
+}
+
+.hero-scene-spotlight-text {
+  /* Hidden everywhere except inside a circle that tracks the pointer
+     (HeroScene.tsx sets --spotlight-x/--spotlight-y on pointermove) —
+     defaults far off-canvas so nothing shows before the first move. The
+     circle lives on this outer layer; the word itself is positioned by the
+     inner span, so moving the word never moves the circle. */
+  --spotlight-radius: clamp(120px, 14vw, 200px);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  clip-path: circle(var(--spotlight-radius) at var(--spotlight-x, -9999px) var(--spotlight-y, -9999px));
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-scene-spotlight-word {
+  /* Centered on the halftone glow (its center is at 45% of the scene's
+     height, see the radialGradient in HeroScene.tsx), not the geometric
+     middle — the headline block crowds the bottom of the hero, so the
+     geometric middle reads as low. */
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.15em;
+  /* letter-spacing also trails the last letter, pushing the visible word
+     left of center — this matching indent puts it back. */
+  padding-left: 0.15em;
+  white-space: nowrap;
+  color: var(--color-secondary);
+  /* Stacked blur radii: a tight white-hot core, then wider cyan halos. */
+  text-shadow:
+    0 0 6px #fff,
+    0 0 16px var(--color-secondary),
+    0 0 36px var(--color-secondary),
+    0 0 72px var(--color-secondary);
+}
+
+@keyframes hero-scene-develop {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* ---- Process page ---- */
+
+.process-page {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.process-intro {
+  max-width: 60ch;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.process-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
+}
+
+.process-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.process-act h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+}
+
+.process-act-lede {
+  margin: 0 0 1.5rem;
+  color: var(--color-muted);
+  max-width: 60ch;
+}
+
+.process-act-plain .process-act-stages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.process-act-plain .process-act-stages h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-default);
+}
+
+.process-act-plain .process-act-stages p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.55;
+}

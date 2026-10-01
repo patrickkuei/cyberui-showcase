@@ -1,22 +1,22 @@
-# cyberui-showcase — working notes for Claude
+# cyberui-templates — working notes for Claude
 
 This file is for whoever (human or Claude) is developing *in this repo*. It
-never ships to an end user: each `packages/*` demo is designed to be forked
+never ships to an end user: each `packages/*` template is designed to be forked
 out on its own (e.g. via `npx tiged`), and this file stays behind at the
 repo root when that happens. It is not the documentation a forker sees.
 
-**What a forker actually sees is the demo package's own source** — its
+**What a forker actually sees is the template package's own source** — its
 README and its in-code comments. That's the only documentation that
-travels with a fork. So when you change a demo package, the comment you'd
+travels with a fork. So when you change a template package, the comment you'd
 normally skip because "the user already has this conversation for
 context" is exactly the comment a forker's AI assistant won't have. Write
 it into the code, not just into your reply to the person driving this
 session.
 
-## What's worth commenting in a demo package
+## What's worth commenting in a template package
 
 Not everything — keep the default discipline (comment WHY, not WHAT, only
-when a reader would otherwise be surprised). In a forkable demo, "a reader"
+when a reader would otherwise be surprised). In a forkable template, "a reader"
 includes someone who has never seen this conversation. Concretely, that
 raises the bar for:
 
@@ -52,18 +52,18 @@ raises the bar for:
 - Don't turn this into a doc-generation exercise — most of the code in
   this repo is already commented at the right density; re-read before
   assuming a gap exists.
-- Don't put this file's own content into a demo package's `CLAUDE.md` —
-  demo packages don't get one. Their documentation is their README plus
+- Don't put this file's own content into a template package's `CLAUDE.md` —
+  template packages don't get one. Their documentation is their README plus
   their source comments.
-- Don't add a skill or process file to a demo package for the same reason:
+- Don't add a skill or process file to a template package for the same reason:
   it's dead weight to anyone who forks the package without this repo's
   tooling.
 
 ## Repo structure
 
-- `packages/<name>/` — one standalone, independently forkable demo app per
+- `packages/<name>/` — one standalone, independently forkable template app per
   cyberui-2045 use case. Each stays self-contained: no `workspace:` ranges,
   no imports outside its own package.
 - `docs/superpowers/plans/` — implementation plans for work done via the
   subagent-driven-development skill. Historical record of *this repo's*
-  development, not part of any demo package.
+  development, not part of any template package.

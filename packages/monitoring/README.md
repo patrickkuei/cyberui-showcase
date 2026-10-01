@@ -1,4 +1,4 @@
-# Nexus AI monitoring dashboard (demo)
+# Nexus AI monitoring dashboard (template)
 
 A live AI-platform monitoring dashboard (requests, latency percentiles, token usage, endpoints, alerts) built with [cyberui-2045](https://www.npmjs.com/package/cyberui-2045) and [Recharts](https://recharts.org/).
 

@@ -1,8 +1,10 @@
 # CyberUI Showcase — Design Spec
 
+> **Rename (2026-10-01):** the repo is now `cyberui-templates` and `packages/showcase` is now `packages/site`, because the project offers templates to fork rather than a gallery to look at. The title and prose below keep the original wording as a record; paths and commands are updated.
+
 **Date:** 2026-09-27
 **Status:** Approved (conversational design) — pending written-spec review
-**Tracking issue:** patrickkuei/cyberui-showcase#1
+**Tracking issue:** patrickkuei/cyberui-templates#1
 
 ## Problem
 
@@ -33,9 +35,9 @@ The original single "AI SaaS dashboard" flagship was split into two standalone d
 Single monorepo (this repo):
 
 ```
-cyberui-showcase/
+cyberui-templates/
 ├── packages/
-│   ├── showcase/       # Main showcase site (landing, gallery, per-demo pages)
+│   ├── site/           # Main site (landing, templates, per-template pages)
 │   ├── monitoring/      # AI product monitoring dashboard demo — self-contained
 │   ├── agent-panel/     # Agent/assistant control panel demo — self-contained
 │   ├── landing/         # Marketing landing page demo — self-contained
@@ -51,19 +53,19 @@ cyberui-showcase/
 **Why each demo package must be self-contained:** Each `packages/{monitoring,agent-panel,landing,mobile,social}` has its own `package.json` (cyberui-2045 as a normal npm dependency — not a workspace symlink) and imports nothing from a shared runtime layer. This means the folder is already a valid standalone project. Users extract just one demo via:
 
 ```bash
-npx tiged patrickkuei/cyberui-showcase/packages/monitoring my-monitoring-dashboard
+npx tiged patrickkuei/cyberui-templates/packages/monitoring my-monitoring-dashboard
 cd my-monitoring-dashboard && npm install && npm run dev
 ```
 
 No cloning the whole monorepo, no workspace tooling leaking into the user's project. This mirrors the pattern used by `create-next-app --example` and MUI's template gallery.
 
-**Naming:** Packages drop the redundant "demo-" prefix (`packages/monitoring`, not `packages/demo-monitoring`) since everything under `packages/` other than `showcase` is implicitly a demo. Showcase routes use `/gallery/*` (not `/demos/*`) to avoid an echo with the package names.
+**Naming:** Packages drop the redundant "demo-" prefix (`packages/monitoring`, not `packages/demo-monitoring`) since everything under `packages/` other than `showcase` is implicitly a demo. Showcase routes use `/templates/*` (not `/demos/*`) to avoid an echo with the package names, and because a template to fork is what a visitor actually gets. (Originally `/gallery/*`; renamed 2026-10-01.)
 
 ## Showcase Site
 
-Routes: `/`, `/gallery/monitoring`, `/gallery/agent-panel`, `/gallery/landing`, `/gallery/mobile`, `/gallery/social`.
+Routes: `/`, `/templates/monitoring`, `/templates/agent-panel`, `/templates/landing`, `/templates/mobile`, `/templates/social`.
 
-Each `/gallery/*` page shows:
+Each `/templates/*` page shows:
 - A **live preview** via `<iframe>` pointing at that demo's separately-deployed static build (not rendered inline in the showcase's own React tree)
 - A **code tab** with read-only key snippets
 - An **inline case study** (Markdown/MDX: problem, design decisions, key snippet, takeaways) — no custom CMS, just content files per demo
@@ -79,15 +81,15 @@ All five demos share cyberui-2045's core dark/neon cyberpunk visual language —
 ## Dependency & Versioning
 
 - Each demo package depends on the **published npm version** of `cyberui-2045`, not a local workspace link. The showcase's job is to prove what a real `npm install cyberui-2045` gets you — a workspace link would show something users can't reproduce and could drift silently from what's published. Bump each demo's dependency deliberately when you want it to pick up new cyberui features.
-- The `cyberui-showcase` monorepo has its **own independent version**, unrelated to cyberui-2045's version.
+- The `cyberui-templates` monorepo has its **own independent version**, unrelated to cyberui-2045's version.
 
 ## Hosting & CI/CD
 
 - **Host:** GitHub Pages (consistent with cyberui-2045's existing Storybook/demo-app hosting).
 - **Pipeline:** One combined GitHub Actions workflow, triggered on push to `main`:
-  1. Build `showcase` and all 4 demo packages.
-  2. Copy each demo's static build output into `showcase/dist/live/<name>/`.
-  3. Deploy the combined `showcase/dist/` as a single GitHub Pages artifact.
+  1. Build `site` and all 4 demo packages.
+  2. Copy each demo's static build output into `site/dist/live/<name>/`.
+  3. Deploy the combined `site/dist/` as a single GitHub Pages artifact.
 - **Why one workflow, not five:** At solo/small scale, splitting into per-package workflows adds deploy-ordering and partial-failure coordination with no real benefit.
 
 ## Explicitly Out of Scope for the Initial Launch
