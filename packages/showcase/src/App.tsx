@@ -2,6 +2,7 @@ import { useHashRoute } from './router/useHashRoute';
 import { HomePage } from './pages/HomePage';
 import { GalleryIndexPage } from './pages/GalleryIndexPage';
 import { GalleryPage } from './pages/GalleryPage';
+import { ProcessPage } from './pages/ProcessPage';
 import { Nav } from './components/Nav';
 import './App.css';
 
@@ -16,8 +17,10 @@ export default function App() {
           <GalleryPage slug={route.slug} />
         ) : route.name === 'gallery-index' ? (
           <GalleryIndexPage />
+        ) : route.name === 'process' ? (
+          <ProcessPage />
         ) : (
-          // v0: process and not-found fall back to Home until Task 11.
+          // v0: an unrecognized hash falls back to Home.
           <HomePage />
         )}
       </main>
