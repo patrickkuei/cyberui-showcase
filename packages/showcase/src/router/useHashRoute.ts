@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export type Route = { name: 'home' } | { name: 'gallery'; slug: string } | { name: 'not-found' };
+export type Route =
+  | { name: 'home' }
+  | { name: 'gallery-index' }
+  | { name: 'gallery'; slug: string }
+  | { name: 'process' }
+  | { name: 'not-found' };
 
 // Gallery slugs come from data (GALLERY_ITEMS), not a fixed union like
 // monitoring's `ROUTES = [...] as const` — so this router parses a slug out
@@ -9,10 +14,12 @@ export type Route = { name: 'home' } | { name: 'gallery'; slug: string } | { nam
 function parseHash(hash: string): Route {
   const value = hash.replace(/^#\/?/, '');
   if (value === '') return { name: 'home' };
+  if (value === 'gallery') return { name: 'gallery-index' };
   if (value.startsWith('gallery/')) {
     const slug = value.slice('gallery/'.length);
-    return slug ? { name: 'gallery', slug } : { name: 'home' };
+    return slug ? { name: 'gallery', slug } : { name: 'gallery-index' };
   }
+  if (value === 'process') return { name: 'process' };
   return { name: 'not-found' };
 }
 
