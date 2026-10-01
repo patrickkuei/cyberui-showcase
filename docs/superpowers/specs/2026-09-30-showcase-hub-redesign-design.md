@@ -6,6 +6,8 @@
 
 > **Naming amendment (2026-10-01):** "Gallery" was renamed **Templates** after this spec was written, because the audience is people building with AI who want a starting point to fork, not a portfolio to browse. Routes are now `/templates` and `/templates/:slug`, the nav item reads "Templates", and the code uses `TemplatesIndexPage`, `TemplatePage`, `TemplateTile` and `TEMPLATES`. The body below keeps the original wording as a record of the design process; read "Gallery" as "Templates". The repo was also renamed `cyberui-showcase` -> `cyberui-templates`, and `packages/showcase` -> `packages/site`.
 
+> **Process page amendment (2026-10-01):** the `/process` page was redesigned after this spec was written, and no longer uses cyberui's `Timeline` component (its `description` is string-only and it has no neutral status; see patrickkuei/CyberUI#60). Each stage now carries a real artifact from this repo and an owner tag. See [2026-10-01-process-page-design.md](2026-10-01-process-page-design.md). The "Process (`/process`)" and "Process page" bullets below describe the original design and are kept as a record.
+
 ## Why this redesign
 
 The original spec deliberately deferred "detailed page layout/visual design" as out of scope. With demo #1 (monitoring) shipped, the actual hub build has two problems worth fixing before demos 2-5 repeat them:
