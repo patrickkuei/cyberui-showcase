@@ -6,7 +6,7 @@ describe('App', () => {
   it('renders the home page by default', () => {
     window.location.hash = '';
     render(<App />);
-    expect(screen.getByText('AI Product Monitoring')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Real products,');
   });
 
   it('renders the gallery page for a known demo hash', () => {

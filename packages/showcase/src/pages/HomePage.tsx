@@ -1,51 +1,48 @@
-import { Badge, Button, Card } from 'cyberui-2045';
-import { GALLERY_ITEMS } from '../data/galleryItems';
+import { Button, GradientText } from 'cyberui-2045';
+import { HeroScene } from '../components/HeroScene';
 import { LiveReadout } from '../components/LiveReadout';
+
+function goToGallery() {
+  window.location.hash = '#/gallery';
+}
 
 export function HomePage() {
   return (
     <div className="home">
-      <header className="hero">
-        <h1 className="hero-title">
-          Real products,
-          <br />
-          not a component playground.
-        </h1>
-        <LiveReadout />
-        <p className="hero-subtitle">
-          cyberui-2045 in production: an AI monitoring dashboard, end to end — the running app, the code
-          behind it, and the decisions that shaped it.
+      <section className="hero">
+        <HeroScene />
+        <div className="hero-content">
+          <GradientText as="h1" variant="accent" className="hero-title">
+            Real products,
+            <br />
+            not a component playground.
+          </GradientText>
+          <Button variant="primary" onClick={goToGallery}>
+            View the gallery
+          </Button>
+        </div>
+      </section>
+
+      <section className="home-intro">
+        <h2>What cyberui-2045 actually is</h2>
+        <p>
+          A production-ready dark/neon component library, not a Storybook of parts in isolation —
+          every demo in the gallery is a real, working app built from it.
         </p>
-        <Button
-          variant="primary"
-          onClick={() => {
-            window.location.hash = GALLERY_ITEMS[0] ? `#/gallery/${GALLERY_ITEMS[0].slug}` : '#/';
-          }}
-        >
+        <LiveReadout />
+        <ul className="home-features">
+          <li>Token-based theming — one accent hue swap re-themes an entire app, no per-component edits.</li>
+          <li>30+ components, from buttons to a keyboard-navigable date picker.</li>
+          <li>Dark-mode-native — not a light theme with the colors inverted.</li>
+          <li>Accessible by default — keyboard navigation and focus states built in, not bolted on.</li>
+        </ul>
+      </section>
+
+      <section className="home-closing-cta">
+        <p>One demo live today, four more on the way.</p>
+        <Button variant="primary" onClick={goToGallery}>
           View the gallery
         </Button>
-      </header>
-
-      <section className="gallery-grid" aria-label="Demo gallery">
-        {GALLERY_ITEMS.map((item) => (
-          <Card key={item.slug} title={item.name} variant="accent">
-            <p className="gallery-tile-tagline">{item.tagline}</p>
-            <div className="gallery-tile-footer">
-              <Badge variant="success" size="sm">
-                Live
-              </Badge>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  window.location.hash = `#/gallery/${item.slug}`;
-                }}
-              >
-                View case study
-              </Button>
-            </div>
-          </Card>
-        ))}
       </section>
     </div>
   );
