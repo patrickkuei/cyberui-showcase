@@ -602,17 +602,6 @@ body {
   line-height: 1.6;
 }
 
-.process-reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 500ms ease-out, transform 500ms ease-out;
-}
-
-.process-reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .process-act h2 {
   margin: 0 0 0.5rem;
   font-size: 1.375rem;
@@ -622,28 +611,6 @@ body {
   margin: 0 0 1.5rem;
   color: var(--color-muted);
   max-width: 60ch;
-}
-
-.process-act-plain .process-act-stages {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.process-act-plain .process-act-stages h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-default);
-}
-
-.process-act-plain .process-act-stages p {
-  margin: 0;
-  color: var(--color-muted);
-  line-height: 1.55;
 }
 
 /* ---- Code block provenance line + wrapped variant (used by /process evidence) ---- */
@@ -851,4 +818,29 @@ body {
   .process-stage[data-reveal] .process-stage-body {
     opacity: 1;
   }
+}
+
+/* ---- Process acts ---- */
+
+.process-act-stages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* The only place on /process where the accent leaks into the library's own
+   tokens: inside the included act, Badge variant="accent" and Badge
+   variant="secondary" paint cyan, and the nodes glow (below). */
+.process-act-included {
+  --color-accent: var(--process-accent);
+  --color-secondary: var(--process-accent);
+}
+
+.process-act-included .process-stage-node {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+  box-shadow: 0 0 10px var(--process-accent);
 }

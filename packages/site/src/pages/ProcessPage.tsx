@@ -1,45 +1,42 @@
-import { ProcessAct } from '../components/ProcessAct';
-import { ProcessActTwo } from '../components/ProcessActTwo';
-import { useRevealOnScroll } from '../hooks/useRevealOnScroll';
-import { ACT_1, ACT_3 } from '../content/processStages';
+import { ProcessOverview } from '../components/ProcessOverview';
+import { ProcessStageRow } from '../components/ProcessStageRow';
+import { INCLUDED_STAGES, PROCESS_STAGES, TOTAL_STAGES, groupIntoActs } from '../content/processStages';
 
-function useReveal() {
-  const { ref, visible } = useRevealOnScroll<HTMLDivElement>();
-  return { ref, className: `process-reveal${visible ? ' process-reveal-visible' : ''}` };
-}
-
+/**
+ * "How we design": the ten stages of making a product, each with the real
+ * artifact we produced for it while building this site, and an honest tag
+ * for who decides. Acts are derived from the stages' owners (see
+ * groupIntoActs); only the included act carries the accent. Design spec:
+ * docs/superpowers/specs/2026-10-01-process-page-design.md.
+ */
 export function ProcessPage() {
-  const act1 = useReveal();
-  const act2 = useReveal();
-  const act3 = useReveal();
+  const acts = groupIntoActs(PROCESS_STAGES);
+  const intro =
+    `${INCLUDED_STAGES} of ${TOTAL_STAGES} stages are included in a cyberui-2045 template; ` +
+    `the other ${TOTAL_STAGES - INCLUDED_STAGES} remain your decisions. ` +
+    'Each stage below shows what we produced for it while building this site, and says plainly where we produced less.';
 
   return (
     <div className="process-page">
       <h1>How we design</h1>
-      <p className="process-intro">
-        Ten stages go into a real product. cyberui-2045 only helps with four of them — here's
-        honestly which ones.
-      </p>
+      <p className="process-intro">{intro}</p>
 
-      <div ref={act1.ref} className={act1.className}>
-        <ProcessAct
-          title="Before the pixels"
-          lede="Entirely on your team. No library does this for you."
-          stages={ACT_1}
-        />
-      </div>
+      <ProcessOverview stages={PROCESS_STAGES} />
 
-      <div ref={act2.ref} className={act2.className}>
-        <ProcessActTwo />
-      </div>
-
-      <div ref={act3.ref} className={act3.className}>
-        <ProcessAct
-          title="Proving it's real"
-          lede="Back to your team for testing. Handoff barely exists — the code you shipped already is the handoff."
-          stages={ACT_3}
-        />
-      </div>
+      {acts.map((act) => (
+        <section
+          key={act.title}
+          className={`process-act ${act.owner === 'library' ? 'process-act-included' : 'process-act-yours'}`}
+        >
+          <h2>{act.title}</h2>
+          <p className="process-act-lede">{act.lede}</p>
+          <ol className="process-act-stages">
+            {act.stages.map((stage) => (
+              <ProcessStageRow key={stage.number} stage={stage} />
+            ))}
+          </ol>
+        </section>
+      ))}
     </div>
   );
 }
