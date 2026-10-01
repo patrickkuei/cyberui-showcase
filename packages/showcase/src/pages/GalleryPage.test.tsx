@@ -27,4 +27,15 @@ describe('GalleryPage', () => {
     render(<GalleryPage slug="nonexistent" />);
     expect(screen.getByText('No demo named "nonexistent" yet.')).toBeInTheDocument();
   });
+
+  it('links back to the gallery index, not home', () => {
+    render(<GalleryPage slug="monitoring" />);
+    expect(screen.getByRole('link', { name: 'All demos' })).toHaveAttribute('href', '#/gallery');
+  });
+
+  it('shows a not-yet-built message for a demo that exists but has not shipped', () => {
+    render(<GalleryPage slug="agent-panel" />);
+    expect(screen.getByText(/isn't built yet/)).toBeInTheDocument();
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  });
 });

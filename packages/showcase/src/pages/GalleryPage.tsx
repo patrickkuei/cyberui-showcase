@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Badge, TabNavigation } from 'cyberui-2045';
-import { getGalleryItem } from '../data/galleryItems';
+import { getGalleryItem, isLive } from '../data/galleryItems';
 import { CASE_STUDIES } from '../content/caseStudies';
 import { CODE_SNIPPETS } from '../content/codeSnippets';
 import { CaseStudy } from '../components/CaseStudy';
@@ -20,10 +20,22 @@ export function GalleryPage({ slug }: GalleryPageProps) {
   if (!item) {
     return (
       <div className="gallery-page">
-        <a className="back-link" href="#/">
+        <a className="back-link" href="#/gallery">
           All demos
         </a>
         <p>No demo named "{slug}" yet.</p>
+      </div>
+    );
+  }
+
+  if (!isLive(item)) {
+    return (
+      <div className="gallery-page">
+        <a className="back-link" href="#/gallery">
+          All demos
+        </a>
+        <h1>{item.name}</h1>
+        <p>This demo isn't built yet — check back soon, or see what's live now.</p>
       </div>
     );
   }
@@ -33,7 +45,7 @@ export function GalleryPage({ slug }: GalleryPageProps) {
 
   return (
     <div className="gallery-page">
-      <a className="back-link" href="#/">
+      <a className="back-link" href="#/gallery">
         All demos
       </a>
 
