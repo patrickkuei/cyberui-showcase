@@ -425,3 +425,61 @@ body {
     filter: blur(0);
   }
 }
+
+/* ---- Process page ---- */
+
+.process-page {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.process-intro {
+  max-width: 60ch;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.process-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
+}
+
+.process-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.process-act h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+}
+
+.process-act-lede {
+  margin: 0 0 1.5rem;
+  color: var(--color-muted);
+  max-width: 60ch;
+}
+
+.process-act-plain .process-act-stages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.process-act-plain .process-act-stages h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-default);
+}
+
+.process-act-plain .process-act-stages p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
