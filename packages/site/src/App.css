@@ -666,3 +666,68 @@ body {
 .code-block-source code {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
+
+/* ---- Process overview strip ---- */
+
+/* The one cyan on /process. Matches the monitoring template's accent
+   (TEMPLATES in src/data/templates.ts). Act 2 and the strip's filled
+   segments read it; nothing else on the page does. */
+.process-page {
+  --process-accent: #00fff9;
+}
+
+.process-overview {
+  margin: 0;
+}
+
+.process-overview-strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+
+.process-overview-strip li {
+  padding: 0.45rem 0;
+  text-align: center;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  border: 1px solid var(--color-border-default);
+}
+
+.process-overview-strip li[data-owner='library'] {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+  color: var(--color-base);
+}
+
+.process-overview-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.process-overview-swatch {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.4rem;
+  border: 1px solid var(--color-border-default);
+}
+
+.process-overview-swatch-library {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+}
+
+@media (max-width: 520px) {
+  .process-overview-strip {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
