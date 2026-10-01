@@ -1,0 +1,63 @@
+name: Deploy showcase
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Demo packages first: showcase's dist/live/<name>/ (below) is built
+      # from each demo's own dist, so it must exist before we combine them.
+      # Extend this list with `pnpm --filter <pkg> run build` as new demos
+      # land (spec: Hosting & CI/CD — one combined workflow, not per-package).
+      - name: Build monitoring demo
+        run: pnpm --filter monitoring-dashboard-demo run build
+
+      - name: Build showcase
+        run: pnpm --filter cyberui-showcase-site run build
+
+      - name: Combine demo builds into showcase/dist/live/*
+        run: |
+          set -e
+          mkdir -p packages/showcase/dist/live/monitoring
+          cp -r packages/monitoring/dist/. packages/showcase/dist/live/monitoring/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/showcase/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
