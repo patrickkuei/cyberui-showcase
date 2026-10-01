@@ -17,9 +17,14 @@ export function DemoTile({ item, size }: DemoTileProps) {
   // this redesign started from: Card's accent variant always reads the
   // raw, unthemed --color-accent unless something scopes it locally.
   // See design spec, Motion & Interaction.
-  const accentStyle = live
-    ? ({ '--color-accent': item.accentHex, '--color-secondary': item.accentHex } as CSSProperties)
-    : undefined;
+  // For coming-soon tiles, scope accent to neutral to ensure Image's
+  // inherent border-accent/30 renders as subtle neutral chrome instead
+  // of falling back to the library's raw yellow default.
+  const accentStyle = (
+    live
+      ? { '--color-accent': item.accentHex, '--color-secondary': item.accentHex }
+      : { '--color-accent': 'var(--color-border-default)', '--color-secondary': 'var(--color-border-default)' }
+  ) as CSSProperties;
 
   return (
     <Card

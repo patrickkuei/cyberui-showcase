@@ -28,4 +28,13 @@ describe('DemoTile', () => {
     const img = screen.getByAltText('Agent Control Panel screenshot');
     expect(img).toHaveAttribute('src', './screenshots/agent-panel.png');
   });
+
+  it('scopes accent color to neutral for coming-soon tiles to prevent yellow border fallback', () => {
+    const item = getGalleryItem('agent-panel')!;
+    const { container } = render(<DemoTile item={item} size="small" />);
+    const card = container.querySelector('.demo-tile.demo-tile-small');
+    expect((card as HTMLElement).style.getPropertyValue('--color-accent')).toBe(
+      'var(--color-border-default)'
+    );
+  });
 });
