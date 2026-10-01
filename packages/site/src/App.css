@@ -844,9 +844,11 @@ body {
 }
 
 @media print {
-  .process-stage .process-stage-node,
-  .process-stage .process-stage-header,
-  .process-stage .process-stage-body {
+  /* Specificity matches the reveal rules (0,3,0) and comes later, so it wins:
+     print has no scroll, so nothing would ever reveal a pending row. */
+  .process-stage[data-reveal] .process-stage-node,
+  .process-stage[data-reveal] .process-stage-header,
+  .process-stage[data-reveal] .process-stage-body {
     opacity: 1;
   }
 }
