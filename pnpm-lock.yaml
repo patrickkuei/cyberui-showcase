@@ -54,7 +54,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@20.19.43)(happy-dom@20.14.5)
 
-  packages/showcase:
+  packages/site:
     dependencies:
       cyberui-2045:
         specifier: ^2.6.0

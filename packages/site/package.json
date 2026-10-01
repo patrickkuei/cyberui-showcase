@@ -1,5 +1,5 @@
 {
-  "name": "monitoring-template",
+  "name": "cyberui-templates-site",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,22 +10,22 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sync-templates": "node scripts/sync-template-builds.mjs"
   },
   "dependencies": {
     "cyberui-2045": "^2.6.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "recharts": "3.10.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.6.0",
-    "happy-dom": "20.14.5",
+    "happy-dom": "^20.14.5",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
     "vitest": "^3.2.4"

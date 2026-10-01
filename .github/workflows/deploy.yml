@@ -1,4 +1,4 @@
-name: Deploy showcase
+name: Deploy site
 
 on:
   push:
@@ -32,25 +32,25 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Demo packages first: showcase's dist/live/<name>/ (below) is built
-      # from each demo's own dist, so it must exist before we combine them.
-      # Extend this list with `pnpm --filter <pkg> run build` as new demos
+      # Template packages first: the site's dist/live/<name>/ (below) is built
+      # from each template's own dist, so it must exist before we combine them.
+      # Extend this list with `pnpm --filter <pkg> run build` as new templates
       # land (spec: Hosting & CI/CD — one combined workflow, not per-package).
-      - name: Build monitoring demo
-        run: pnpm --filter monitoring-dashboard-demo run build
+      - name: Build monitoring template
+        run: pnpm --filter monitoring-template run build
 
-      - name: Build showcase
-        run: pnpm --filter cyberui-showcase-site run build
+      - name: Build site
+        run: pnpm --filter cyberui-templates-site run build
 
-      - name: Combine demo builds into showcase/dist/live/*
+      - name: Combine template builds into site/dist/live/*
         run: |
           set -e
-          mkdir -p packages/showcase/dist/live/monitoring
-          cp -r packages/monitoring/dist/. packages/showcase/dist/live/monitoring/
+          mkdir -p packages/site/dist/live/monitoring
+          cp -r packages/monitoring/dist/. packages/site/dist/live/monitoring/
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/showcase/dist
+          path: packages/site/dist
 
   deploy:
     needs: build

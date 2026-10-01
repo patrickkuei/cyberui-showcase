@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Naming amendment (2026-10-01):** this plan is the record of what was executed, so it keeps the original names. "Gallery" was later renamed **Templates** — see the amendment in the design spec. Read `/gallery` as `/templates`, `GalleryItem`/`GALLERY_ITEMS` as `Template`/`TEMPLATES`, `GalleryPage`/`GalleryIndexPage` as `TemplatePage`/`TemplatesIndexPage`, and `DemoTile` as `TemplateTile`. The repo was also renamed `cyberui-showcase` -> `cyberui-templates`, and `packages/showcase` -> `packages/site`.
+
 **Goal:** Redesign the `packages/showcase` hub (Home, a new Gallery index, and a new Process page) per the approved design spec — fix the single-card-in-a-void layout and undisciplined accent usage, and add an honest "how we design" page.
 
 **Architecture:** Four routes (`/`, `/gallery`, `/gallery/:slug`, `/process`) behind a persistent nav, sharing one `GalleryItem` data model extended with per-demo accent hex and shipped/coming-soon status. New shared pieces (`Nav`, `DemoTile`, `HeroScene`, `ProcessAct`/`ProcessActTwo`) are small, single-purpose components; the existing demo detail page (`GalleryPage`, `CodeViewer`, `CaseStudy`) is untouched except for its back-link target and a new not-yet-shipped branch.

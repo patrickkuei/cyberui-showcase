@@ -4,6 +4,8 @@
 **Status:** Brainstorming in progress — captured incrementally, not yet a final approved spec
 **Builds on:** [2026-09-27-cyberui-showcase-design.md](2026-09-27-cyberui-showcase-design.md) (original architecture — routes, iframe isolation, self-contained packages, demo-first build order — all still holds; this doc covers a redesign of the *hub's* IA and visual design, not a rebuild)
 
+> **Naming amendment (2026-10-01):** "Gallery" was renamed **Templates** after this spec was written, because the audience is people building with AI who want a starting point to fork, not a portfolio to browse. Routes are now `/templates` and `/templates/:slug`, the nav item reads "Templates", and the code uses `TemplatesIndexPage`, `TemplatePage`, `TemplateTile` and `TEMPLATES`. The body below keeps the original wording as a record of the design process; read "Gallery" as "Templates". The repo was also renamed `cyberui-showcase` -> `cyberui-templates`, and `packages/showcase` -> `packages/site`.
+
 ## Why this redesign
 
 The original spec deliberately deferred "detailed page layout/visual design" as out of scope. With demo #1 (monitoring) shipped, the actual hub build has two problems worth fixing before demos 2-5 repeat them:
