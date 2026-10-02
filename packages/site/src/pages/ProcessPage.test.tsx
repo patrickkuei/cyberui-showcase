@@ -73,7 +73,7 @@ describe('ProcessPage', () => {
   it('says plainly what was not done on the two stages that have a caveat', () => {
     stubIntersectionObserver('immediate');
     render(<ProcessPage />);
-    expect(screen.getAllByText('Not done:')).toHaveLength(2);
+    expect(screen.getAllByText('Open to input:')).toHaveLength(2);
   });
 
   it('shows every stage in full when nothing has been revealed yet (no hidden-forever content)', () => {

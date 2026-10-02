@@ -59,11 +59,24 @@ describe('ProcessStageRow', () => {
   it('states what was not done on stages that have a caveat, and only those', () => {
     stubIntersectionObserver('immediate');
     const withCaveat = renderRow(2);
-    expect(screen.getByText('Not done:')).toBeInTheDocument();
-    expect(screen.getByText(/No user interviews/)).toBeInTheDocument();
+    expect(screen.getByText('Open to input:')).toBeInTheDocument();
+    expect(screen.getByText(/haven't interviewed visitors/)).toBeInTheDocument();
     withCaveat.unmount();
     renderRow(1);
-    expect(screen.queryByText('Not done:')).not.toBeInTheDocument();
+    expect(screen.queryByText('Open to input:')).not.toBeInTheDocument();
+  });
+
+  it('links a caveat to a GitHub issue prefilled with a title and body, and only on caveat stages', () => {
+    stubIntersectionObserver('immediate');
+    const withCaveat = renderRow(2);
+    const href = screen.getByRole('link', { name: /open an issue/i }).getAttribute('href')!;
+    const url = new URL(href);
+    expect(url.origin + url.pathname).toBe('https://github.com/patrickkuei/cyberui-templates/issues/new');
+    expect(url.searchParams.get('title')).toBe('Feedback on stage 2: Research');
+    expect(url.searchParams.get('body')).toContain('## What I build');
+    withCaveat.unmount();
+    renderRow(1);
+    expect(screen.queryByRole('link', { name: /open an issue/i })).not.toBeInTheDocument();
   });
 
   it('shows the screenshot for the image stage, with alt text and a source link', () => {

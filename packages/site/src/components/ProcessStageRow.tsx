@@ -1,6 +1,6 @@
-import { Badge } from 'cyberui-2045';
 import { CodeViewer } from './CodeViewer';
-import { OWNER_LABEL, sourceUrl, type ProcessStage } from '../content/processStages';
+import { OwnerTag } from './OwnerTag';
+import { feedbackIssueUrl, sourceUrl, type ProcessStage } from '../content/processStages';
 import { useStageReveal } from '../hooks/useStageReveal';
 
 export interface ProcessStageRowProps {
@@ -9,18 +9,16 @@ export interface ProcessStageRowProps {
 
 /**
  * One stage of the process: a spine node, a header (number, title, owner
- * tag), then a body (summary, evidence, optional caveat). Renders an <li>;
+ * tag), then a body (summary, evidence, optional "Open to input" note with a
+ * prefilled GitHub-issue link). Renders an <li>;
  * wrap rows in an <ol>.
  *
  * Reveal is opacity-only and driven by data-reveal (see useStageReveal and
  * the .process-stage rules in App.css). Every part is always in the DOM, so
  * text is selectable/searchable and screen readers read all of it.
  *
- * The owner tag is a library Badge. "Included" uses variant="accent", which
- * is cyan only inside .process-act-included (that class scopes --color-accent).
- * "Your decision" uses variant="secondary" with --color-secondary scoped to
- * the muted token in CSS, the same technique TemplateTile uses so a neutral
- * badge never falls back to the library's raw default color.
+ * The owner tag is OwnerTag, not a library Badge, so it looks like the
+ * overview strip's squares (see OwnerTag).
  */
 export function ProcessStageRow({ stage }: ProcessStageRowProps) {
   const { ref, stage: reveal } = useStageReveal<HTMLLIElement>();
@@ -32,11 +30,7 @@ export function ProcessStageRow({ stage }: ProcessStageRowProps) {
       <div className="process-stage-header">
         <span className="process-stage-number">{String(stage.number).padStart(2, '0')}</span>
         <h3>{stage.title}</h3>
-        <span className={`process-owner process-owner-${stage.owner}`}>
-          <Badge variant={stage.owner === 'library' ? 'accent' : 'secondary'} size="sm">
-            {OWNER_LABEL[stage.owner]}
-          </Badge>
-        </span>
+        <OwnerTag owner={stage.owner} />
       </div>
       <div className="process-stage-body">
         <p className="process-stage-summary">{stage.summary}</p>
@@ -66,9 +60,13 @@ export function ProcessStageRow({ stage }: ProcessStageRowProps) {
             </p>
           </figure>
         )}
-        {evidence.caveat && (
+        {evidence.caveat && evidence.invite && (
           <p className="process-stage-caveat">
-            <strong>Not done:</strong> {evidence.caveat}
+            <strong>Open to input:</strong> {evidence.caveat} {evidence.invite.prompt}{' '}
+            <a href={feedbackIssueUrl(evidence.invite)} target="_blank" rel="noreferrer">
+              Open an issue <span aria-hidden="true">↗</span>
+              <span className="visually-hidden"> (opens in new tab)</span>
+            </a>
           </p>
         )}
       </div>

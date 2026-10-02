@@ -23,12 +23,19 @@ interface EvidenceBase {
   /** Commit the evidence was taken from. */
   asOf: string;
   /**
-   * What was NOT done for this stage. Present on stages whose real process
-   * was thinner than the stage name suggests (Research, Prototype & Testing).
-   * The page shows it as "Not done: ..." beside the artifact; never invent
-   * evidence to fill a gap, say what the gap is.
+   * What was NOT done for this stage, one plain sentence. Present on stages
+   * whose real process was thinner than the stage name suggests (Research,
+   * Prototype & Testing). The page shows it beside the artifact under "Open to
+   * input:", followed by `invite`; never invent evidence to fill a gap, say
+   * what the gap is.
    */
   caveat?: string;
+  /**
+   * The ask that goes with a caveat: a sentence inviting the visitor to help, plus the title and
+   * body prefilled into the GitHub issue the page links to, so they start from a prompt, not a blank box.
+   * Required whenever `caveat` is set (and only then); evidenceFor throws otherwise.
+   */
+  invite?: { prompt: string; issueTitle: string; issueBody: string };
 }
 
 export type StageEvidence =
@@ -57,6 +64,7 @@ interface RawEvidence {
   source: { path: string; label: string };
   asOf: string;
   caveat?: string;
+  invite?: { prompt: string; issueTitle: string; issueBody: string };
   excerpt?: string[];
   diagram?: boolean;
   src?: string;
@@ -68,7 +76,15 @@ const RAW_EVIDENCE = evidenceJson as unknown as Record<string, RawEvidence>;
 function evidenceFor(number: number): StageEvidence {
   const raw = RAW_EVIDENCE[String(number)];
   if (!raw) throw new Error(`processEvidence.json has no entry for stage ${number}`);
-  const base = { source: raw.source, asOf: raw.asOf, ...(raw.caveat ? { caveat: raw.caveat } : {}) };
+  if (Boolean(raw.caveat) !== Boolean(raw.invite)) {
+    throw new Error(`processEvidence.json stage ${number}: caveat and invite must be set together`);
+  }
+  const base = {
+    source: raw.source,
+    asOf: raw.asOf,
+    ...(raw.caveat ? { caveat: raw.caveat } : {}),
+    ...(raw.invite ? { invite: raw.invite } : {}),
+  };
   if (raw.kind === 'image') {
     if (!raw.src || !raw.alt) throw new Error(`processEvidence.json stage ${number}: image needs src and alt`);
     return { ...base, kind: 'image', src: raw.src, alt: raw.alt };
@@ -84,6 +100,18 @@ const REPO_BLOB_BASE = 'https://github.com/patrickkuei/cyberui-templates/blob/ma
 /** Link to a repo file on main. */
 export function sourceUrl(path: string): string {
   return `${REPO_BLOB_BASE}${path}`;
+}
+
+const ISSUES_NEW_URL = 'https://github.com/patrickkuei/cyberui-templates/issues/new';
+
+/**
+ * New-issue link with title and body prefilled (GitHub reads `title` and `body` from the query
+ * string). `labels` is deliberately not set: GitHub only applies it if the label exists and the
+ * visitor may apply labels.
+ */
+export function feedbackIssueUrl(invite: { issueTitle: string; issueBody: string }): string {
+  const query = new URLSearchParams({ title: invite.issueTitle, body: invite.issueBody });
+  return `${ISSUES_NEW_URL}?${query.toString()}`;
 }
 
 type StageCopy = Omit<ProcessStage, 'evidence'>;

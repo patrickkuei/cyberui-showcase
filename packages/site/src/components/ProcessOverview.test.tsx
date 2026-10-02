@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ProcessOverview } from './ProcessOverview';
 import { PROCESS_STAGES } from '../content/processStages';
 
@@ -20,6 +21,19 @@ describe('ProcessOverview', () => {
     // Each segment carries its stage, title and owner as text for assistive tech.
     expect(items[4]).toHaveTextContent('Stage 5: Visual Direction, Included');
     expect(items[0]).toHaveTextContent('Stage 1: Discovery, Your decision');
+  });
+
+  it('captions the strip so the squares are not a mystery', () => {
+    render(<ProcessOverview stages={PROCESS_STAGES} />);
+    expect(screen.getByText(/The 10 stages of making a product/)).toBeInTheDocument();
+  });
+
+  it('names a square in a tooltip on hover', async () => {
+    render(<ProcessOverview stages={PROCESS_STAGES} />);
+    const first = within(screen.getByRole('list')).getAllByRole('listitem')[0]!;
+    // The library Tooltip waits 200ms before opening; findByRole's 1000ms default covers it.
+    await userEvent.hover(first.querySelector('.process-overview-cell')!);
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Stage 1 · Discovery · Your decision');
   });
 
   it('explains both kinds of segment in a legend', () => {

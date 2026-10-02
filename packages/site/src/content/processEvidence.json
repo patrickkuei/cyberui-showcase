@@ -22,7 +22,12 @@
       "  - A commissioned/sourced static illustration or a designed logo mark — real asset-production cost with no existing brand mark to build from; inconsistent with this being a solo-maintainer, no-deadline project (same reasoning that ruled out the AI-remix feature in the original spec).",
       "  - A plain grid-horizon + glow scene — closer to the generic \"dark mode + one accent glow\" AI-design cliché than the halftone approach; halftone/screentone is a concrete, referenceable cyberpunk-manga vernacular detail (Akira/Ghost in the Shell-era print aesthetic), not generic decoration."
     ],
-    "caveat": "No user interviews or surveys were run. The reasoning comes from reviewing screenshots of the existing page and weighing alternatives, not from talking to visitors."
+    "caveat": "We haven't interviewed visitors yet.",
+    "invite": {
+      "prompt": "If you build with AI and know what a template should answer first, we'd like to hear it.",
+      "issueTitle": "Feedback on stage 2: Research",
+      "issueBody": "<!-- Thanks for helping with the Research stage of /process. A few sentences under each heading is plenty; delete anything that doesn't apply. -->\n\n## What I build\n(For example: what you're making, and with which AI assistant.)\n\n## What I'd want a template to answer first\n\n## Anything we got wrong or missed\n"
+    }
   },
   "3": {
     "kind": "excerpt",
@@ -119,7 +124,12 @@
     "excerpt": [
       "**Prototype & Testing:** the iterative wireframe/visual-direction discussion in this doc *is* the prototype pass for a project this size — no separate mockup tool or user-testing round planned. Verification happens by building it and screenshot-reviewing against this doc (the same method used to diagnose the original page's problems at the start of this conversation). Existing component tests (`App.test.tsx`, `HomePage.test.tsx`, `GalleryPage.test.tsx`) get updated/extended for the new routes and components during implementation — an implementation-plan concern, not a design decision captured here."
     ],
-    "caveat": "No user-testing round was run. Verification was building the page and reviewing screenshots against the spec, plus component tests for rendering and routing."
+    "caveat": "We haven't run a user-testing round yet.",
+    "invite": {
+      "prompt": "If you try a template and something confuses you or gets in your way, we'd like to hear it.",
+      "issueTitle": "Feedback on stage 9: Prototype & Testing",
+      "issueBody": "<!-- Thanks for helping with the testing stage of /process. A few sentences under each heading is plenty; delete anything that doesn't apply. -->\n\n## Which template I tried\n\n## What I did\n\n## What confused me or got in the way\n\n## What I expected instead\n"
+    }
   },
   "10": {
     "kind": "excerpt",

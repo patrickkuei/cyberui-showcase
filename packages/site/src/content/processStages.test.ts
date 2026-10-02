@@ -6,6 +6,7 @@ import {
   OWNER_LABEL,
   groupIntoActs,
   sourceUrl,
+  feedbackIssueUrl,
   type ProcessStage,
 } from './processStages';
 
@@ -52,6 +53,25 @@ describe('PROCESS_STAGES', () => {
     const stage3 = PROCESS_STAGES.find((s) => s.number === 3);
     const evidence = stage3?.evidence;
     expect(evidence?.kind === 'excerpt' && evidence.excerpt.split('\n')).toHaveLength(4);
+  });
+});
+
+describe('invite', () => {
+  it('is present on exactly the stages that have a caveat', () => {
+    const withInvite = PROCESS_STAGES.filter((s) => s.evidence.invite).map((s) => s.number);
+    const withCaveat = PROCESS_STAGES.filter((s) => s.evidence.caveat).map((s) => s.number);
+    expect(withInvite).toEqual([2, 9]);
+    expect(withInvite).toEqual(withCaveat);
+  });
+});
+
+describe('feedbackIssueUrl', () => {
+  it('prefills title and body, round-tripping newlines and special characters', () => {
+    const invite = { issueTitle: 'A & B #1 <x>', issueBody: 'line one\n\n## Heading & more\n<!-- c --> #2' };
+    const url = new URL(feedbackIssueUrl(invite));
+    expect(url.origin + url.pathname).toBe('https://github.com/patrickkuei/cyberui-templates/issues/new');
+    expect(url.searchParams.get('title')).toBe(invite.issueTitle);
+    expect(url.searchParams.get('body')).toBe(invite.issueBody);
   });
 });
 
