@@ -648,53 +648,73 @@ body {
    segments read it; nothing else on the page does. */
 .process-page {
   --process-accent: #00fff9;
-  /* The two knobs for the background dots below: base strength, and the
-     stronger strength while the reader is in the Included act. */
+  /* Background dot knobs (see the two layers below): base strength, then the
+     second layer's color and strength while the reader is in the Included act. */
   --process-dots-opacity: 0.5;
-  --process-dots-opacity-included: 0.9;
+  --process-dots-color-included: color-mix(in srgb, var(--color-border-default), var(--color-muted) 45%);
+  --process-dots-opacity-included: 0.7;
   --process-rail-gap: 72px; /* the one knob for the progress rail's distance from the content column */
   isolation: isolate;
 }
 
-/* Faint halftone dots behind this page only. Two strengths: the base, and a
-   brighter one while the reader is in the Included act (data-dots='included',
-   set from the current stage). Neutral (the border grey, no hue) so it never
-   competes with the cyan accent, at either strength; the only motion is the
-   opacity fade between them. Fixed to the viewport so the dots stay put while
-   content scrolls and page length does not stretch the fade. Scoped via
-   .process-page's own ::before so no other page or the template preview
-   iframes get it. Both html and body paint an opaque --color-base (library +
-   site CSS), so body's background is NOT propagated to the canvas and would
-   cover a z-index -1 layer in the root stacking context. isolation: isolate
-   makes .process-page its own stacking context, so the layer paints above
-   body's background but below the page's content. The fixed pseudo-element
-   still anchors to the viewport (isolation creates no containing block). */
-.process-page::before {
+/* Faint halftone dots behind this page only, as two layers on the same 10px
+   grid so their dots coincide. ::before is the base: neutral (the border
+   grey, no hue), weighted to the top-right, masked to nothing toward the
+   bottom-left. That mask hides the left side, where the text is, so raising
+   this layer's opacity cannot make dots more visible there. While the reader
+   is in the Included act (data-dots='included', set from the current stage),
+   ::after cross-fades in: a lighter neutral grey with a wider mask that keeps
+   a floor across the whole viewport, so the dots show behind the text too.
+   Neutral at both strengths so it never competes with the cyan accent; the
+   only motion is the opacity cross-fade. Both are fixed to the viewport so the
+   dots stay put while content scrolls and page length does not stretch the
+   fade; position: fixed also takes them out of the flex column's flow, so
+   they add no gap. Scoped via .process-page's own pseudo-elements so no other
+   page or the template preview iframes get them. Both html and body paint an
+   opaque --color-base (library + site CSS), so body's background is NOT
+   propagated to the canvas and would cover a z-index -1 layer in the root
+   stacking context. isolation: isolate makes .process-page its own stacking
+   context, so the layers paint above body's background but below the page's
+   content. The fixed pseudo-elements still anchor to the viewport (isolation
+   creates no containing block). */
+.process-page::before,
+.process-page::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
   background-size: 10px 10px;
+}
+
+.process-page::before {
+  background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
   opacity: var(--process-dots-opacity);
-  transition: opacity 400ms ease-out;
   -webkit-mask-image: linear-gradient(to bottom left, #000, transparent 70%);
   mask-image: linear-gradient(to bottom left, #000, transparent 70%);
 }
 
-.process-page[data-dots='included']::before {
+.process-page::after {
+  background-image: radial-gradient(var(--process-dots-color-included) 1.1px, transparent 1.3px);
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+  -webkit-mask-image: linear-gradient(to bottom left, #000, rgba(0, 0, 0, 0.4) 100%);
+  mask-image: linear-gradient(to bottom left, #000, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.process-page[data-dots='included']::after {
   opacity: var(--process-dots-opacity-included);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .process-page::before {
+  .process-page::after {
     transition: none;
   }
 }
 
 @media print {
-  .process-page::before {
+  .process-page::before,
+  .process-page::after {
     display: none;
   }
 }
