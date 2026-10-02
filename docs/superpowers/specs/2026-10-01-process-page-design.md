@@ -40,7 +40,8 @@ type Owner = 'you' | 'library';
 interface EvidenceBase {
   source: { path: string; label: string };  // repo path, links to main
   asOf: string;                             // commit the evidence was taken from
-  caveat?: string;                          // what was NOT done; required for stages 2 and 9
+  caveat?: string;                          // what was NOT done, one plain sentence; required for stages 2 and 9
+  invite?: { prompt: string; issueTitle: string; issueBody: string };  // the ask that goes with a caveat; set together with it
 }
 
 type StageEvidence =
@@ -56,7 +57,7 @@ interface ProcessStage {
 }
 ```
 
-`caveat` lives inside `evidence` on purpose: stages 2 and 9 still show a real artifact, plus a plain statement of what was skipped. Stage 7's evidence is an image, which is why `StageEvidence` is a union.
+`caveat` lives inside `evidence` on purpose: stages 2 and 9 still show a real artifact, plus a plain statement of what was skipped. Each caveat comes with an `invite`: a sentence asking the visitor to help, and a title and body prefilled into a GitHub new-issue link (`issues/new?title=...&body=...`; `labels` is not set, because GitHub only applies it when the label exists and the visitor may apply it). The prefilled body gives visitors prompts to answer instead of a blank box. `caveat` and `invite` must be set together; the data loader throws otherwise. Stage 7's evidence is an image, which is why `StageEvidence` is a union.
 
 **Where the data lives.** Editorial copy (titles, summaries, owners) is in `processStages.ts`. Evidence is in `processEvidence.json`, so the excerpt-drift script (below) can read it with plain Node, without a TypeScript step.
 
@@ -99,7 +100,7 @@ ACT 1 · lede
    │   ┌ Evidence · original spec › Problem ──────────┐
    │   │ verbatim excerpt (monospace)                  │
    │   └ Full file ↗ · as of c0c11b6 ──────────────────┘
-   │   Not done: … (stages 2 and 9 only)
+   │   Open to input: … Open an issue ↗ (stages 2 and 9 only)
    ◆ 02  …
 ACT 2 · same rows, accent nodes and tags, tag reads [ Included ]
 ACT 3 · same rows
@@ -116,11 +117,11 @@ Each stage is a row with a vertical spine and a diamond node. Evidence is expand
 All within the hub rule: neutral chrome, neon only in Act 2, no new colors.
 
 - **Spine:** 1px neutral border line. **Nodes:** diamonds. Your decision is hollow and neutral. Included is filled with the accent and glows, which only happens in Act 2. The accent is a scoped local override on the Act 2 container, the same technique as the live template tile.
-- **Owner tag:** a text label, never color alone. Neutral outline for Your decision; accent fill for Included.
+- **Owner tag:** a text label, never color alone, styled to match the overview strip's squares exactly (one visual vocabulary): neutral outline for Your decision; accent fill with dark text for Included; no glow.
 - **Stage number:** mono, muted (`05`). Title at weight 600 in the default text color.
 - **Evidence panel:** surface background, mono, 1px neutral border, no glow even in Act 2 (the glow belongs to node and tag). A muted label line above gives source › section.
-- **Caveat:** muted text with a "Not done:" label and a neutral left rule. No warning color.
-- **Overview strip:** 10 segments with visible numbers; outline for Your decision, accent fill for 5-8; legend beneath.
+- **Caveat:** muted text with an "Open to input:" label and a neutral left rule: the plain statement of what was not done, then the invitation, then a neutral underlined "Open an issue" link. No warning color.
+- **Overview strip:** a visible caption ("The 10 stages of making a product"), 10 segments with visible numbers; outline for Your decision, accent fill for 5-8; legend beneath. Each segment shows a library `Tooltip` on hover or focus ("Stage 5 · Visual Direction · Included"), so a first-time visitor can tell what the squares are. The Tooltip does not open on tap, so touch users rely on the stage rows below; the squares are not tab stops (screen readers get the same text from visually hidden text).
 - **Type:** unchanged (IBM Plex Sans/Mono).
 - To check on screen: that the accent-filled "Included" tag reads as a status label, not a call to action.
 
@@ -128,9 +129,9 @@ All within the hub rule: neutral chrome, neon only in Act 2, no new colors.
 
 | Need | Use |
 |---|---|
-| Owner tag | `Badge`: `accent` for Included; `secondary` for Your decision, with `--color-secondary` scoped to `--color-muted` (the same technique `TemplateTile` uses for coming-soon tiles). Confirm it reads as neutral on screen. |
+| Owner tag | Small custom `OwnerTag` (a plain labeled span) sharing the strip squares' look. A library `Badge` was tried first and dropped: it cannot render an outline, so the tags did not match the strip. |
 | Evidence excerpt | Site-local `CodeViewer`, extended for source link, "as of" line and inline horizontal scroll |
-| Overview strip | Custom CSS. `Steps` and `SegmentedProgress` model progress, not an ownership split. |
+| Overview strip | Custom CSS plus the library `Tooltip` per segment. `Steps` and `SegmentedProgress` model progress, not an ownership split. |
 | Spine and nodes | Custom CSS (see §4) |
 | Row container | Decide at implementation (`Card` versus plain markup) |
 
