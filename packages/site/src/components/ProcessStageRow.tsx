@@ -43,6 +43,7 @@ export function ProcessStageRow({ stage }: ProcessStageRowProps) {
                 sourceHref: sourceUrl(evidence.source.path),
                 asOf: evidence.asOf,
                 wrap: !evidence.diagram,
+                diagram: evidence.diagram,
               },
             ]}
           />

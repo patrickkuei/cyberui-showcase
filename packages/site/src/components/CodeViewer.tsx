@@ -14,7 +14,7 @@ export function CodeViewer({ snippets }: CodeViewerProps) {
       {snippets.map((snippet) => (
         <figure className="code-block" key={snippet.title}>
           <figcaption>{snippet.title}</figcaption>
-          <pre className={snippet.wrap ? 'code-block-wrap' : undefined}>
+          <pre className={[snippet.wrap && 'code-block-wrap', snippet.diagram && 'code-block-diagram'].filter(Boolean).join(' ') || undefined}>
             <code>{snippet.code}</code>
           </pre>
           {(snippet.sourceHref || snippet.asOf) && (

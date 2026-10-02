@@ -51,24 +51,24 @@
       "path": "docs/superpowers/specs/2026-09-30-showcase-hub-redesign-design.md",
       "label": "Hub redesign spec › Wireframe › Home"
     },
-    "asOf": "c0c11b6",
+    "asOf": "2c09185",
     "excerpt": [
-      "┌───────────────────────────────────────────────────┐",
-      "│ [nav — sticky]                                     │",
-      "│  ┌───────────────────────────────────────────┐    │",
+      "┌─────────────────────────────────────────────────────┐",
+      "│ [nav — sticky]                                      │",
+      "│  ┌─────────────────────────────────────────────┐    │",
       "│  │  [ halftone/screentone glow scene —         │    │",
       "│  │    see Visual Direction — not a screenshot] │    │",
       "│  │  headline (copy TBD)                        │    │",
       "│  │  [ VIEW THE GALLERY ] ← one loud CTA        │    │",
-      "│  └───────────────────────────────────────────┘    │",
-      "│  ─── What cyberui-2045 actually is ───────────────│",
-      "│  1-2 sentence positioning + quiet, text-led        │",
-      "│  feature highlights (tokens/theming, component     │",
-      "│  count, dark-mode-native, accessible by default)   │",
-      "│  — not a SaaS-card grid.                           │",
-      "│  ─── closing CTA ──────────────────────────────────│",
-      "│  \"One demo live, four more coming.\" [ VIEW GALLERY]│",
-      "└───────────────────────────────────────────────────┘"
+      "│  └─────────────────────────────────────────────┘    │",
+      "│  ─── What cyberui-2045 actually is ─────────────────│",
+      "│  1-2 sentence positioning + quiet, text-led         │",
+      "│  feature highlights (tokens/theming, component      │",
+      "│  count, dark-mode-native, accessible by default)    │",
+      "│  — not a SaaS-card grid.                            │",
+      "│  ─── closing CTA ───────────────────────────────────│",
+      "│  \"One demo live, four more coming.\" [ VIEW GALLERY] │",
+      "└─────────────────────────────────────────────────────┘"
     ]
   },
   "5": {

@@ -11,6 +11,12 @@ export interface CodeSnippet {
    * leave unset for diagrams and code, where line breaks are the content.
    */
   wrap?: boolean;
+  /**
+   * Box-drawing or column-aligned text. Scrolls instead of wrapping (do not
+   * also set `wrap`), and is set in one system monospace font with a tight
+   * line height so box characters line up and vertical bars connect.
+   */
+  diagram?: boolean;
 }
 
 export interface CaseStudyContent {

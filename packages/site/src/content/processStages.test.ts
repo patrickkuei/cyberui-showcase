@@ -49,6 +49,14 @@ describe('PROCESS_STAGES', () => {
     expect(evidence?.kind === 'image' && evidence.src).toBe('./screenshots/home-hero.png');
   });
 
+  it('keeps the stage 4 wireframe a clean rectangle (every line the same width)', () => {
+    const evidence = PROCESS_STAGES.find((s) => s.number === 4)?.evidence;
+    expect(evidence?.kind).toBe('excerpt');
+    const lines = evidence?.kind === 'excerpt' ? evidence.excerpt.split('\n') : [];
+    const widths = new Set(lines.map((line) => [...line].length));
+    expect([...widths], 'stage 4 excerpt line widths (ragged ASCII art)').toHaveLength(1);
+  });
+
   it('joins multi-line excerpts with newlines', () => {
     const stage3 = PROCESS_STAGES.find((s) => s.number === 3);
     const evidence = stage3?.evidence;

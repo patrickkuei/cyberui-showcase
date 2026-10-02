@@ -22,6 +22,14 @@ describe('CodeViewer', () => {
     expect(screen.getByText('c0c11b6')).toBeInTheDocument();
   });
 
+  it('marks diagram snippets with code-block-diagram, and only those, without implying wrap', () => {
+    const { container, rerender } = render(<CodeViewer snippets={[{ title: 'Art', code: 'x', diagram: true }]} />);
+    expect(container.querySelector('pre')).toHaveClass('code-block-diagram');
+    expect(container.querySelector('pre')).not.toHaveClass('code-block-wrap');
+    rerender(<CodeViewer snippets={[{ title: 'Code', code: 'x' }]} />);
+    expect(container.querySelector('pre')).not.toHaveClass('code-block-diagram');
+  });
+
   it('wraps long lines only when wrap is set, so diagrams can keep scrolling instead', () => {
     const { container, rerender } = render(<CodeViewer snippets={[{ title: 'Prose', code: 'x', wrap: true }]} />);
     expect(container.querySelector('pre')).toHaveClass('code-block-wrap');

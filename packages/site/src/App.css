@@ -1049,3 +1049,15 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
+/* ---- Diagram blocks ---- */
+/* Diagrams (box-drawing characters, column-aligned text) need every glyph
+   from one font: a web font often lacks the box-drawing characters, so the
+   browser substitutes another font for those glyphs and its cell width does
+   not match, which misaligns the right edge. A system monospace stack keeps
+   the whole block in one font, and a tight line height lets vertical bars
+   connect between rows. */
+.code-block pre.code-block-diagram code {
+  font-family: ui-monospace, 'Cascadia Mono', 'Cascadia Code', Consolas, Menlo, 'DejaVu Sans Mono', monospace;
+  line-height: 1.25;
+}

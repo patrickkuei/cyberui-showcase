@@ -56,6 +56,17 @@ describe('ProcessStageRow', () => {
     expect(diagram.container.querySelector('pre')).not.toHaveClass('code-block-wrap');
   });
 
+  it('sets diagram excerpts in the diagram font class, and prose excerpts not', () => {
+    stubIntersectionObserver('immediate');
+    for (const n of [3, 4]) {
+      const r = renderRow(n);
+      expect(r.container.querySelector('pre'), `stage ${n}`).toHaveClass('code-block-diagram');
+      r.unmount();
+    }
+    const prose = renderRow(1);
+    expect(prose.container.querySelector('pre')).not.toHaveClass('code-block-diagram');
+  });
+
   it('states what was not done on stages that have a caveat, and only those', () => {
     stubIntersectionObserver('immediate');
     const withCaveat = renderRow(2);
