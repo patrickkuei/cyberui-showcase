@@ -889,7 +889,7 @@ body {
 
 /* The only place on /process where the accent leaks into the library's own
    tokens: inside the included act only --color-accent is scoped. It paints
-   the "Included" accent Badge and the nodes' glow (below). */
+   the "Included" tag (through --process-accent) and the nodes' glow (below). */
 .process-act-included {
   --color-accent: var(--process-accent);
 }
