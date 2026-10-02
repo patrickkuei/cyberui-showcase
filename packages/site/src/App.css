@@ -648,6 +648,33 @@ body {
    segments read it; nothing else on the page does. */
 .process-page {
   --process-accent: #00fff9;
+  --process-dots-opacity: 0.5; /* the one knob for the background dots below */
+}
+
+/* Faint halftone dots behind this page only. Neutral (the border grey, no
+   hue) so it never competes with the cyan accent; static; fixed so the dots
+   stay put while content scrolls and page length does not stretch the fade.
+   Scoped via .process-page's own ::before so no other page or the template
+   preview iframes get it. z-index -1 is safe because no ancestor (.shell,
+   main, #root) makes a stacking context or paints a background: body's
+   background lives on the canvas, below the layer. */
+.process-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
+  background-size: 10px 10px;
+  opacity: var(--process-dots-opacity);
+  -webkit-mask-image: linear-gradient(to bottom left, #000, transparent 70%);
+  mask-image: linear-gradient(to bottom left, #000, transparent 70%);
+}
+
+@media print {
+  .process-page::before {
+    display: none;
+  }
 }
 
 .process-overview {
@@ -659,34 +686,22 @@ body {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  /* Fixed small squares, left-aligned: a compact chip row, not a full-width bar. */
+  grid-template-columns: repeat(10, 2rem);
+  justify-content: start;
   gap: 4px;
 }
 
 .process-overview-strip li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 0.8125rem;
+  font-size: 0.6875rem;
   color: var(--color-muted);
   border: 1px solid var(--color-border-default);
-}
-
-/* The Tooltip's wrapper <span> is fit-content wide; stretch it (and the cell
-   inside) so the whole square is the hover target. */
-.process-overview-strip li > span:first-child {
-  display: flex;
-  width: 100%;
-}
-
-.process-overview-cell {
-  width: 100%;
-  padding: 0.45rem 0;
-  text-align: center;
-}
-
-/* The library tooltip's secondary variant adds a glow; only the Act-2 nodes
-   may glow on this page. */
-.process-overview-strip .process-overview-tooltip {
-  box-shadow: none;
+  border-radius: 4px;
 }
 
 .process-overview-caption {
@@ -716,6 +731,7 @@ body {
   height: 0.75rem;
   margin-right: 0.4rem;
   border: 1px solid var(--color-border-default);
+  border-radius: 2px;
 }
 
 .process-overview-swatch-library {
@@ -723,9 +739,11 @@ body {
   border-color: var(--process-accent);
 }
 
+/* 10 x 1.75rem + 9 x 4px = 316px: one row inside a 375px viewport's
+   343px of content width (--shell-pad is 1.25rem = 20px at that width). */
 @media (max-width: 520px) {
   .process-overview-strip {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(10, 1.75rem);
   }
 }
 
@@ -791,6 +809,7 @@ body {
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   border: 1px solid var(--color-border-default);
+  border-radius: 4px;
   color: var(--color-muted);
 }
 

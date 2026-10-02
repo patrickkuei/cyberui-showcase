@@ -23,17 +23,12 @@ describe('ProcessOverview', () => {
     expect(items[0]).toHaveTextContent('Stage 1: Discovery, Your decision');
   });
 
-  it('captions the strip so the squares are not a mystery', () => {
+  it('captions the strip and offers no tooltip', async () => {
     render(<ProcessOverview stages={PROCESS_STAGES} />);
-    expect(screen.getByText(/The 10 stages of making a product/)).toBeInTheDocument();
-  });
-
-  it('names a square in a tooltip on hover', async () => {
-    render(<ProcessOverview stages={PROCESS_STAGES} />);
-    const first = within(screen.getByRole('list')).getAllByRole('listitem')[0]!;
-    // The library Tooltip waits 200ms before opening; findByRole's 1000ms default covers it.
-    await userEvent.hover(first.querySelector('.process-overview-cell')!);
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('Stage 1 · Discovery · Your decision');
+    expect(screen.getByText('The 10 stages of making a product')).toBeInTheDocument();
+    // The library Tooltip was removed (hover-only, never opens on touch); the names live in the rows below.
+    await userEvent.hover(within(screen.getByRole('list')).getAllByRole('listitem')[0]!);
+    expect(screen.queryByRole('tooltip')).toBeNull();
   });
 
   it('explains both kinds of segment in a legend', () => {
