@@ -127,11 +127,10 @@ describe('ProcessPage', () => {
     vi.stubGlobal('IntersectionObserver', Recorder);
     const { container } = render(<ProcessPage />);
     const page = container.querySelector('.process-page')!;
-    const rowObserver = instances.find((o) => o.options?.rootMargin === '-35% 0px -60% 0px');
-    expect(rowObserver).toBeDefined();
+    const rowObserver = instances.find((o) => o.options?.rootMargin === '-35% 0px -60% 0px')!;
     const reach = (n: number) =>
       act(() =>
-        rowObserver!.callback(
+        rowObserver.callback(
           [{ isIntersecting: true, target: container.querySelector(`[data-stage-number="${n}"]`)! } as IntersectionObserverEntry],
           {} as IntersectionObserver,
         ),

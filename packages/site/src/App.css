@@ -656,19 +656,19 @@ body {
   isolation: isolate;
 }
 
-/* Faint halftone dots behind this page only. Two strengths: the base, and a
-   brighter one while the reader is in the Included act (data-dots='included',
-   set from the current stage). Neutral (the border grey, no hue) so it never
-   competes with the cyan accent, at either strength; the only motion is the
-   opacity fade between them. Fixed to the viewport so the dots stay put while
-   content scrolls and page length does not stretch the fade. Scoped via
-   .process-page's own ::before so no other page or the template preview
-   iframes get it. Both html and body paint an opaque --color-base (library +
-   site CSS), so body's background is NOT propagated to the canvas and would
-   cover a z-index -1 layer in the root stacking context. isolation: isolate
-   makes .process-page its own stacking context, so the layer paints above
-   body's background but below the page's content. The fixed pseudo-element
-   still anchors to the viewport (isolation creates no containing block). */
+/* Faint halftone dots behind this page only, brighter (same neutral colour,
+   only the strength changes) while the reader is in the Included act
+   (data-dots='included', set from the current stage). Neutral (the border grey, no
+   hue) so it never competes with the cyan accent; static; fixed so the dots
+   stay put while content scrolls and page length does not stretch the fade.
+   Scoped via .process-page's own ::before so no other page or the template
+   preview iframes get it. Both html and body paint an opaque --color-base
+   (library + site CSS), so body's background is NOT propagated to the canvas
+   and would cover a z-index -1 layer in the root stacking context.
+   isolation: isolate makes .process-page its own stacking context, so the
+   layer paints above body's background but below the page's content. The
+   fixed pseudo-element still anchors to the viewport (isolation creates no
+   containing block). */
 .process-page::before {
   content: '';
   position: fixed;
