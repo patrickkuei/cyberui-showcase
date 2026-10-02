@@ -17,11 +17,6 @@ export function ProcessPage() {
   const overviewRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef, endRef);
-  // The dot layer is one fixed layer behind the whole page (a per-act layer
-  // would only fill the content column), so the Included act's brighter dots
-  // are driven by the current stage's owner. With reduced motion or no
-  // IntersectionObserver `current` is null, so the dots stay at base strength.
-  const dots = PROCESS_STAGES.find((s) => s.number === current)?.owner === 'library' ? 'included' : 'base';
   const acts = groupIntoActs(PROCESS_STAGES);
   const intro =
     `${INCLUDED_STAGES} of ${TOTAL_STAGES} stages are included in a cyberui-2045 template; ` +
@@ -33,7 +28,7 @@ export function ProcessPage() {
     `and you take the other ${TOTAL_STAGES - INCLUDED_STAGES} from there.`;
 
   return (
-    <div ref={rootRef} className="process-page" data-dots={dots}>
+    <div ref={rootRef} className="process-page">
       <h1>How we design</h1>
       <p className="process-intro">{intro}</p>
 

@@ -648,17 +648,12 @@ body {
    segments read it; nothing else on the page does. */
 .process-page {
   --process-accent: #00fff9;
-  /* The two knobs for the background dots below: base strength, and the
-     stronger strength while the reader is in the Included act. */
-  --process-dots-opacity: 0.5;
-  --process-dots-opacity-included: 0.9;
+  --process-dots-opacity: 0.5; /* the one knob for the background dots below */
   --process-rail-gap: 72px; /* the one knob for the progress rail's distance from the content column */
   isolation: isolate;
 }
 
-/* Faint halftone dots behind this page only, brighter (same neutral colour,
-   only the strength changes) while the reader is in the Included act
-   (data-dots='included', set from the current stage). Neutral (the border grey, no
+/* Faint halftone dots behind this page only. Neutral (the border grey, no
    hue) so it never competes with the cyan accent; static; fixed so the dots
    stay put while content scrolls and page length does not stretch the fade.
    Scoped via .process-page's own ::before so no other page or the template
@@ -678,19 +673,8 @@ body {
   background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
   background-size: 10px 10px;
   opacity: var(--process-dots-opacity);
-  transition: opacity 400ms ease-out;
   -webkit-mask-image: linear-gradient(to bottom left, #000, transparent 70%);
   mask-image: linear-gradient(to bottom left, #000, transparent 70%);
-}
-
-.process-page[data-dots='included']::before {
-  opacity: var(--process-dots-opacity-included);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .process-page::before {
-    transition: none;
-  }
 }
 
 @media print {
