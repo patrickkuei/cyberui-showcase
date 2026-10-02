@@ -649,15 +649,20 @@ body {
 .process-page {
   --process-accent: #00fff9;
   --process-dots-opacity: 0.5; /* the one knob for the background dots below */
+  isolation: isolate;
 }
 
 /* Faint halftone dots behind this page only. Neutral (the border grey, no
    hue) so it never competes with the cyan accent; static; fixed so the dots
    stay put while content scrolls and page length does not stretch the fade.
    Scoped via .process-page's own ::before so no other page or the template
-   preview iframes get it. z-index -1 is safe because no ancestor (.shell,
-   main, #root) makes a stacking context or paints a background: body's
-   background lives on the canvas, below the layer. */
+   preview iframes get it. Both html and body paint an opaque --color-base
+   (library + site CSS), so body's background is NOT propagated to the canvas
+   and would cover a z-index -1 layer in the root stacking context.
+   isolation: isolate makes .process-page its own stacking context, so the
+   layer paints above body's background but below the page's content. The
+   fixed pseudo-element still anchors to the viewport (isolation creates no
+   containing block). */
 .process-page::before {
   content: '';
   position: fixed;
@@ -687,7 +692,7 @@ body {
   padding: 0;
   display: grid;
   /* Fixed small squares, left-aligned: a compact chip row, not a full-width bar. */
-  grid-template-columns: repeat(10, 2rem);
+  grid-template-columns: repeat(10, minmax(0, 2rem));
   justify-content: start;
   gap: 4px;
 }
@@ -739,11 +744,13 @@ body {
   border-color: var(--process-accent);
 }
 
-/* 10 x 1.75rem + 9 x 4px = 316px: one row inside a 375px viewport's
-   343px of content width (--shell-pad is 1.25rem = 20px at that width). */
+/* 10 x 1.75rem + 9 x 4px = 316px. At 375px the content is 335px (375 - 2 x
+   20px --shell-pad), so it fits. Below ~356px the minmax(0, ...) columns
+   shrink (about 24px at 320px) rather than overflow; "10" at 0.6875rem
+   monospace is about 13px wide, which fits. */
 @media (max-width: 520px) {
   .process-overview-strip {
-    grid-template-columns: repeat(10, 1.75rem);
+    grid-template-columns: repeat(10, minmax(0, 1.75rem));
   }
 }
 
