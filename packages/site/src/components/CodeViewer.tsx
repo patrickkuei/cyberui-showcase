@@ -14,9 +14,25 @@ export function CodeViewer({ snippets }: CodeViewerProps) {
       {snippets.map((snippet) => (
         <figure className="code-block" key={snippet.title}>
           <figcaption>{snippet.title}</figcaption>
-          <pre>
+          <pre className={[snippet.wrap && 'code-block-wrap', snippet.diagram && 'code-block-diagram'].filter(Boolean).join(' ') || undefined}>
             <code>{snippet.code}</code>
           </pre>
+          {(snippet.sourceHref || snippet.asOf) && (
+            <p className="code-block-source">
+              {snippet.sourceHref && (
+                <a href={snippet.sourceHref} target="_blank" rel="noreferrer">
+                  Full file <span aria-hidden="true">↗</span>
+                  <span className="visually-hidden"> (opens in new tab)</span>
+                </a>
+              )}
+              {snippet.sourceHref && snippet.asOf && ' · '}
+              {snippet.asOf && (
+                <>
+                  as of <code>{snippet.asOf}</code>
+                </>
+              )}
+            </p>
+          )}
           {snippet.note && <p className="code-block-note">{snippet.note}</p>}
         </figure>
       ))}

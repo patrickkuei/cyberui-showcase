@@ -1,0 +1,26 @@
+name: Checks
+
+# The excerpts on /process are copies of text from files in this repo, and a
+# copy can drift from its source. This fails the build when one no longer
+# matches. The script uses only Node built-ins, so no pnpm install is needed.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  process-excerpts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: node --test scripts/check-process-excerpts.test.mjs
+
+      - run: node scripts/check-process-excerpts.mjs

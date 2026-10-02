@@ -602,17 +602,6 @@ body {
   line-height: 1.6;
 }
 
-.process-reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 500ms ease-out, transform 500ms ease-out;
-}
-
-.process-reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .process-act h2 {
   margin: 0 0 0.5rem;
   font-size: 1.375rem;
@@ -624,24 +613,451 @@ body {
   max-width: 60ch;
 }
 
-.process-act-plain .process-act-stages {
+/* ---- Code block provenance line + wrapped variant (used by /process evidence) ---- */
+
+.code-block pre.code-block-wrap code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code-block-source {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.code-block-source a {
+  color: var(--color-default);
+  text-decoration: underline;
+}
+
+/* Only the included act gets cyan links; the site never redefines
+   --color-secondary, so using it here would paint every act cyan. */
+.process-act-included .code-block-source a {
+  color: var(--process-accent);
+}
+
+.code-block-source code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ---- Process overview strip ---- */
+
+/* The one cyan on /process. Matches the monitoring template's accent
+   (TEMPLATES in src/data/templates.ts). Act 2 and the strip's filled
+   segments read it; nothing else on the page does. */
+.process-page {
+  --process-accent: #00fff9;
+  --process-dots-opacity: 0.5; /* the one knob for the background dots below */
+  --process-rail-gap: 72px; /* the one knob for the progress rail's distance from the content column */
+  isolation: isolate;
+}
+
+/* Faint halftone dots behind this page only. Neutral (the border grey, no
+   hue) so it never competes with the cyan accent; static; fixed so the dots
+   stay put while content scrolls and page length does not stretch the fade.
+   Scoped via .process-page's own ::before so no other page or the template
+   preview iframes get it. Both html and body paint an opaque --color-base
+   (library + site CSS), so body's background is NOT propagated to the canvas
+   and would cover a z-index -1 layer in the root stacking context.
+   isolation: isolate makes .process-page its own stacking context, so the
+   layer paints above body's background but below the page's content. The
+   fixed pseudo-element still anchors to the viewport (isolation creates no
+   containing block). */
+.process-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--color-border-default) 1.1px, transparent 1.3px);
+  background-size: 10px 10px;
+  opacity: var(--process-dots-opacity);
+  -webkit-mask-image: linear-gradient(to bottom left, #000, transparent 70%);
+  mask-image: linear-gradient(to bottom left, #000, transparent 70%);
+}
+
+@media print {
+  .process-page::before {
+    display: none;
+  }
+}
+
+.process-overview {
+  margin: 0;
+}
+
+.process-overview-strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* Fixed small squares, left-aligned: a compact chip row, not a full-width bar. */
+  grid-template-columns: repeat(10, minmax(0, 2rem));
+  justify-content: start;
+  gap: 4px;
+}
+
+/* Shared by the inline strip and the left progress rail (see "Process
+   progress rail" below) so the two lists cannot drift apart. Width comes from
+   each list's own grid column; height is fixed here. */
+.process-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: var(--color-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+}
+
+.process-overview-caption {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.process-chip[data-owner='library'] {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+  color: var(--color-base);
+}
+
+.process-overview-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.process-overview-swatch {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.4rem;
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+}
+
+.process-overview-swatch-library {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+}
+
+/* 10 x 1.75rem + 9 x 4px = 316px. At 375px the content is 335px (375 - 2 x
+   20px --shell-pad), so it fits. Below ~356px the minmax(0, ...) columns
+   shrink (about 24px at 320px) rather than overflow; "10" at 0.6875rem
+   monospace is about 13px wide, which fits. */
+@media (max-width: 520px) {
+  .process-overview-strip {
+    grid-template-columns: repeat(10, minmax(0, 1.75rem));
+  }
+}
+
+/* ---- Process progress rail ---- */
+
+/* A decorative duplicate of the inline strip, fixed in the left margin once
+   the strip has scrolled away (ProcessPage drives data-visible).
+   position: fixed takes it out of the flex flow, so it adds no gap to the
+   page. Opacity is the only thing that animates, like the stage reveal. The
+   current stage gets a plain outline ring: no accent, no glow (those belong
+   to the included act). Only shown where the left margin can hold it; below
+   that the inline strip is the only version, as on phones.
+
+   Placement: a fixed gap from the content column, set by the single knob
+   --process-rail-gap (on .process-page). The content column is the .shell's
+   max 1216px column centered in the viewport, so its left edge is
+   50% - 608px; the rail is 1.75rem = 28px wide, so its left edge is
+   50% - 608px - 28px - gap, floored at 4px from the viewport edge. E.g. at a
+   1643px-wide viewport: 821.5 - 608 - 28 - 72 = about 113px from the edge.
+   As the viewport narrows the gap shrinks until the 4px floor binds.
+
+   Breakpoint: the rail needs 4 + 28 + 12 = 44px of clear space beside the
+   content, so (W - 1216) / 2 >= 44 gives W >= 1304px of layout width; at the
+   floor the gap to the content is then still >= 12px. Media queries include
+   the scrollbar (up to ~15px) that the layout width excludes, so min-width is
+   1320px: with a 15px scrollbar the layout is 1305px and the content's left
+   edge is 44.5px.
+
+   Height: the rail is 10 x 24px + 9 x 4px = 276px tall and centered, so it
+   clears the ~56px sticky nav (2 x 1rem padding + a line) with 16px to spare
+   from a 440px-tall viewport; the 480px cutoff adds slack. z-index keeps it
+   above the dot layer (z-index -1 in the same stacking context);
+   pointer-events: none so it never intercepts clicks. */
+.process-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: max(4px, calc(50% - 608px - 28px - var(--process-rail-gap)));
+  transform: translateY(-50%);
+  z-index: 1;
+  grid-template-columns: 1.75rem;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+  pointer-events: none;
+}
+
+.process-rail[data-visible='true'] {
+  opacity: 1;
+}
+
+.process-rail li[data-current='true'] {
+  outline: 2px solid var(--color-default);
+  outline-offset: 2px;
+}
+
+@media (min-width: 1320px) and (min-height: 481px) {
+  .process-rail {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-rail {
+    transition: none;
+  }
+}
+
+@media print {
+  .process-rail {
+    display: none;
+  }
+}
+
+/* ---- Process closing ---- */
+
+/* The page's ending after stage 10. Plain neutral link: the page's only neon
+   is Act 2 and the strip's filled chips, so no library Button here. */
+.process-closing {
+  max-width: 60ch;
+  padding: 1rem 0 6rem;
+}
+
+.process-closing h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+}
+
+.process-closing p {
+  margin: 0 0 1rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.process-closing a {
+  color: var(--color-default);
+  text-decoration: underline;
+}
+
+/* Zero-height sentinel at the very end of the page: ProcessPage's scroll-spy
+   observes it to know the reader reached the bottom. min-height keeps it from
+   collapsing to nothing, which some browsers never report as intersecting. */
+.process-end {
+  min-height: 1px;
+}
+
+/* ---- Process stage row ---- */
+
+.process-stage {
+  position: relative;
+  padding-left: 2.25rem;
+}
+
+/* Spine: a 1px line through each row, running on through the gap to the next. */
+.process-stage::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 1.1rem;
+  bottom: -2rem;
+  width: 1px;
+  background: var(--color-border-default);
+}
+
+.process-stage:last-child::before {
+  display: none;
+}
+
+.process-stage-node {
+  position: absolute;
+  left: 0.125rem;
+  top: 0.7rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  transform: rotate(45deg);
+  background: var(--color-base);
+  border: 1px solid var(--color-muted);
+}
+
+.process-stage-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.process-stage-number {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.process-stage-header h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-default);
+}
+
+/* ---- Owner tag (mirrors the overview strip's squares) ---- */
+
+.owner-tag {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  color: var(--color-muted);
+}
+
+.owner-tag-library {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+  color: var(--color-base);
+}
+
+.process-stage-summary {
+  margin: 0.75rem 0 1rem;
+  max-width: 68ch;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.process-stage-caveat {
+  margin: 0.75rem 0 0;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--color-border-default);
+  max-width: 68ch;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.process-stage-caveat a {
+  color: var(--color-default);
+  text-decoration: underline;
+}
+
+.process-evidence-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border-default);
+  border-radius: 6px;
+}
+
+/* Reveal. Opacity only, and every part keeps its height in every state, so
+   nothing shifts while the page scrolls. Default (no data-reveal rule
+   matches) is fully visible; see useStageReveal. */
+.process-stage-node,
+.process-stage-header,
+.process-stage-body {
+  transition: opacity 500ms ease-out;
+}
+
+.process-stage[data-reveal='pending'] .process-stage-node,
+.process-stage[data-reveal='pending'] .process-stage-header {
+  opacity: 0;
+}
+
+.process-stage[data-reveal='pending'] .process-stage-body,
+.process-stage[data-reveal='header'] .process-stage-body {
+  opacity: 0;
+}
+
+/* A keyboard user can tab to a link inside a row that has not revealed yet.
+   Focus must never land on something invisible (WCAG 2.4.7), so focus forces
+   the row fully visible. Specificity (0,4,0) beats the hiding rules (0,3,0). */
+.process-stage[data-reveal]:focus-within .process-stage-node,
+.process-stage[data-reveal]:focus-within .process-stage-header,
+.process-stage[data-reveal]:focus-within .process-stage-body {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-stage-node,
+  .process-stage-header,
+  .process-stage-body {
+    transition: none;
+  }
+}
+
+@media print {
+  /* Specificity matches the reveal rules (0,3,0) and comes later, so it wins:
+     print has no scroll, so nothing would ever reveal a pending row. */
+  .process-stage[data-reveal] .process-stage-node,
+  .process-stage[data-reveal] .process-stage-header,
+  .process-stage[data-reveal] .process-stage-body {
+    opacity: 1;
+  }
+}
+
+/* ---- Process acts ---- */
+
+.process-act-stages {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
-.process-act-plain .process-act-stages h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-default);
+/* The only place on /process where the accent leaks into the library's own
+   tokens: inside the included act only --color-accent is scoped. It paints
+   the "Included" tag (through --process-accent) and the nodes' glow (below). */
+.process-act-included {
+  --color-accent: var(--process-accent);
 }
 
-.process-act-plain .process-act-stages p {
-  margin: 0;
-  color: var(--color-muted);
-  line-height: 1.55;
+.process-act-included .process-stage-node {
+  background: var(--process-accent);
+  border-color: var(--process-accent);
+  box-shadow: 0 0 10px var(--process-accent);
+}
+
+/* ---- Visually hidden text (screen-reader only) ---- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Diagram blocks ---- */
+/* Diagrams (box-drawing characters, column-aligned text) need every glyph
+   from one font: a web font often lacks the box-drawing characters, so the
+   browser substitutes another font for those glyphs and its cell width does
+   not match, which misaligns the right edge. A system monospace stack keeps
+   the whole block in one font, and a tight line height lets vertical bars
+   connect between rows. */
+.code-block pre.code-block-diagram code {
+  font-family: ui-monospace, 'Cascadia Mono', 'Cascadia Code', Consolas, Menlo, 'DejaVu Sans Mono', monospace;
+  line-height: 1.25;
 }
