@@ -649,6 +649,7 @@ body {
 .process-page {
   --process-accent: #00fff9;
   --process-dots-opacity: 0.5; /* the one knob for the background dots below */
+  --process-rail-gap: 72px; /* the one knob for the progress rail's distance from the content column */
   isolation: isolate;
 }
 
@@ -759,22 +760,28 @@ body {
 
 /* ---- Process progress rail ---- */
 
-/* A decorative duplicate of the inline strip, fixed to the far left of the
-   screen once the strip has scrolled away (ProcessPage drives data-visible).
+/* A decorative duplicate of the inline strip, fixed in the left margin once
+   the strip has scrolled away (ProcessPage drives data-visible).
    position: fixed takes it out of the flex flow, so it adds no gap to the
    page. Opacity is the only thing that animates, like the stage reveal. The
    current stage gets a plain outline ring: no accent, no glow (those belong
    to the included act). Only shown where the left margin can hold it; below
    that the inline strip is the only version, as on phones.
 
-   Placement: left: 4px, so the rail (1.75rem = 28px wide) occupies
-   x = 4px..32px. It must keep at least 0.75rem (12px) clear of the content
-   column, which is the .shell's max 1216px column centered in the viewport:
-   its left edge is (W - 1216px) / 2 once W > 1216px + 2 x side padding (max
-   32px). Required: (W - 1216) / 2 >= 4 + 28 + 12 = 44px, so W >= 1216 + 88 =
-   1304px of layout width. Media queries include the scrollbar (up to ~15px)
-   that the layout width excludes, so min-width is 1320px: with a 15px
-   scrollbar the layout is 1305px and the left edge is 44.5px.
+   Placement: a fixed gap from the content column, set by the single knob
+   --process-rail-gap (on .process-page). The content column is the .shell's
+   max 1216px column centered in the viewport, so its left edge is
+   50% - 608px; the rail is 1.75rem = 28px wide, so its left edge is
+   50% - 608px - 28px - gap, floored at 4px from the viewport edge. E.g. at a
+   1643px-wide viewport: 821.5 - 608 - 28 - 72 = about 113px from the edge.
+   As the viewport narrows the gap shrinks until the 4px floor binds.
+
+   Breakpoint: the rail needs 4 + 28 + 12 = 44px of clear space beside the
+   content, so (W - 1216) / 2 >= 44 gives W >= 1304px of layout width; at the
+   floor the gap to the content is then still >= 12px. Media queries include
+   the scrollbar (up to ~15px) that the layout width excludes, so min-width is
+   1320px: with a 15px scrollbar the layout is 1305px and the content's left
+   edge is 44.5px.
 
    Height: the rail is 10 x 24px + 9 x 4px = 276px tall and centered, so it
    clears the ~56px sticky nav (2 x 1rem padding + a line) with 16px to spare
@@ -788,7 +795,7 @@ body {
   display: none;
   position: fixed;
   top: 50%;
-  left: 4px;
+  left: max(4px, calc(50% - 608px - 28px - var(--process-rail-gap)));
   transform: translateY(-50%);
   z-index: 1;
   grid-template-columns: 1.75rem;
@@ -823,6 +830,38 @@ body {
   .process-rail {
     display: none;
   }
+}
+
+/* ---- Process closing ---- */
+
+/* The page's ending after stage 10. Plain neutral link: the page's only neon
+   is Act 2 and the strip's filled chips, so no library Button here. */
+.process-closing {
+  max-width: 60ch;
+  padding: 1rem 0 6rem;
+}
+
+.process-closing h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+}
+
+.process-closing p {
+  margin: 0 0 1rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.process-closing a {
+  color: var(--color-default);
+  text-decoration: underline;
+}
+
+/* Zero-height sentinel at the very end of the page: ProcessPage's scroll-spy
+   observes it to know the reader reached the bottom. min-height keeps it from
+   collapsing to nothing, which some browsers never report as intersecting. */
+.process-end {
+  min-height: 1px;
 }
 
 /* ---- Process stage row ---- */

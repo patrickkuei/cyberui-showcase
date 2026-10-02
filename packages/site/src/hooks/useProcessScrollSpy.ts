@@ -18,6 +18,14 @@ export const READING_BAND_MARGIN = '-35% 0px -60% 0px';
  *   viewport AND above it. The "above" check keeps the rail from appearing
  *   when the strip is merely below the fold.
  *
+ * The band alone cannot reach the last stage: at maximum scroll the last
+ * row's top never gets up to the band (the page cannot scroll further), and
+ * on a tall viewport even the one before it can be missed. So a third
+ * observer watches an end-of-page sentinel (endRef, the last child of the
+ * page); while it is in view `current` is the last stage. When it leaves
+ * view `current` is left alone: the band observer takes over as the reader
+ * scrolls back up.
+ *
  * The rail is a decorative extra, so content must never depend on it: with
  * prefers-reduced-motion, or in a browser without IntersectionObserver, no
  * observers are created and the result is { current: null, pastOverview: false }
@@ -28,6 +36,7 @@ export const READING_BAND_MARGIN = '-35% 0px -60% 0px';
 export function useProcessScrollSpy(
   rootRef: RefObject<HTMLElement | null>,
   overviewRef: RefObject<HTMLElement | null>,
+  endRef: RefObject<HTMLElement | null>,
 ): { current: number | null; pastOverview: boolean } {
   const reducedMotion = usePrefersReducedMotion();
   const canObserve = typeof IntersectionObserver !== 'undefined';
@@ -64,8 +73,24 @@ export function useProcessScrollSpy(
       observers.push(observer);
     }
 
+    const end = endRef.current;
+    if (root && end) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          const numbers = [...root.querySelectorAll<HTMLElement>('[data-stage-number]')]
+            .map((row) => Number(row.dataset.stageNumber))
+            .filter((n) => !Number.isNaN(n));
+          if (numbers.length > 0) setCurrent(Math.max(...numbers));
+        },
+        { threshold: 0 },
+      );
+      observer.observe(end);
+      observers.push(observer);
+    }
+
     return () => observers.forEach((observer) => observer.disconnect());
-  }, [reducedMotion, canObserve, rootRef, overviewRef]);
+  }, [reducedMotion, canObserve, rootRef, overviewRef, endRef]);
 
   if (reducedMotion || !canObserve) return { current: null, pastOverview: false };
   return { current, pastOverview };

@@ -15,12 +15,17 @@ import { useProcessScrollSpy } from '../hooks/useProcessScrollSpy';
 export function ProcessPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const overviewRef = useRef<HTMLDivElement>(null);
-  const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef);
+  const endRef = useRef<HTMLDivElement>(null);
+  const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef, endRef);
   const acts = groupIntoActs(PROCESS_STAGES);
   const intro =
     `${INCLUDED_STAGES} of ${TOTAL_STAGES} stages are included in a cyberui-2045 template; ` +
     `the other ${TOTAL_STAGES - INCLUDED_STAGES} remain your decisions. ` +
     'Each stage below shows what we produced for it while building this site, and says plainly where we produced less.';
+
+  const closing =
+    `A template starts you with the ${INCLUDED_STAGES} included stages already done. ` +
+    `Pick one and take the other ${TOTAL_STAGES - INCLUDED_STAGES} from there.`;
 
   return (
     <div ref={rootRef} className="process-page">
@@ -45,6 +50,17 @@ export function ProcessPage() {
           </ol>
         </section>
       ))}
+
+      <section className="process-closing">
+        <h2>Start from the result</h2>
+        <p>{closing}</p>
+        <a href="#/templates">
+          Browse templates <span aria-hidden="true">→</span>
+        </a>
+      </section>
+
+      {/* Scroll-spy sentinel: lets the rail reach the last stage (see useProcessScrollSpy). */}
+      <div ref={endRef} className="process-end" aria-hidden="true" />
 
       <ProcessRail stages={PROCESS_STAGES} current={current} visible={pastOverview} />
     </div>

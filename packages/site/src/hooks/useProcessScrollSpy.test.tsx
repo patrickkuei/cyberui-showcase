@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { useProcessScrollSpy, READING_BAND_MARGIN } from './useProcessScrollSpy';
 
 // An IntersectionObserver the test can fire by hand, one instance per
-// observer the hook creates, identified by its options.
+// observer the hook creates, identified by what it observes.
 class ControlledObserver {
   static instances: ControlledObserver[] = [];
   constructor(
@@ -13,7 +13,10 @@ class ControlledObserver {
   ) {
     ControlledObserver.instances.push(this);
   }
-  observe() {}
+  observed: Element[] = [];
+  observe(target: Element) {
+    this.observed.push(target);
+  }
   unobserve() {}
   disconnect() {}
   fire(entry: Partial<IntersectionObserverEntry>) {
@@ -24,20 +27,25 @@ class ControlledObserver {
 function Probe() {
   const rootRef = useRef<HTMLDivElement>(null);
   const overviewRef = useRef<HTMLDivElement>(null);
-  const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef);
+  const endRef = useRef<HTMLDivElement>(null);
+  const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef, endRef);
   return (
     <div ref={rootRef} data-testid="root" data-current={String(current)} data-past={String(pastOverview)}>
       <div ref={overviewRef} data-testid="overview" />
       <div data-stage-number="1" data-testid="row-1" />
       <div data-stage-number="2" data-testid="row-2" />
       <div data-stage-number="3" data-testid="row-3" />
+      <div ref={endRef} data-testid="end" />
     </div>
   );
 }
 
 const attr = (name: 'data-current' | 'data-past') => screen.getByTestId('root').getAttribute(name);
-const overviewObserver = () => ControlledObserver.instances.find((o) => o.options?.rootMargin === undefined)!;
-const rowObserver = () => ControlledObserver.instances.find((o) => o.options?.rootMargin === READING_BAND_MARGIN)!;
+const observerOf = (testId: string) =>
+  ControlledObserver.instances.find((o) => o.observed.includes(screen.getByTestId(testId)))!;
+const overviewObserver = () => observerOf('overview');
+const rowObserver = () => observerOf('row-1');
+const endObserver = () => observerOf('end');
 
 afterEach(() => {
   ControlledObserver.instances = [];
@@ -51,7 +59,9 @@ describe('useProcessScrollSpy', () => {
     render(<Probe />);
     expect(attr('data-current')).toBe('null');
     expect(attr('data-past')).toBe('false');
-    expect(rowObserver().options?.rootMargin).toBe('-35% 0px -60% 0px');
+    expect(rowObserver().options?.rootMargin).toBe(READING_BAND_MARGIN);
+    expect(READING_BAND_MARGIN).toBe('-35% 0px -60% 0px');
+    expect(ControlledObserver.instances).toHaveLength(3);
   });
 
   it('is past the overview only when it is out of view and above the viewport', () => {
@@ -75,6 +85,18 @@ describe('useProcessScrollSpy', () => {
     expect(attr('data-current')).toBe('3');
     act(() => rowObserver().fire({ isIntersecting: false, target: screen.getByTestId('row-3') }));
     expect(attr('data-current')).toBe('3');
+  });
+
+  it('jumps to the last stage when the end of the page is in view, and keeps it when it leaves', () => {
+    vi.stubGlobal('IntersectionObserver', ControlledObserver);
+    render(<Probe />);
+    act(() => endObserver().fire({ isIntersecting: true }));
+    expect(attr('data-current')).toBe('3');
+    act(() => endObserver().fire({ isIntersecting: false }));
+    expect(attr('data-current')).toBe('3');
+    // Scrolling back up: the band observer takes over again.
+    act(() => rowObserver().fire({ isIntersecting: true, target: screen.getByTestId('row-2') }));
+    expect(attr('data-current')).toBe('2');
   });
 
   it('creates no observers and reports nothing without IntersectionObserver', () => {
