@@ -47,22 +47,22 @@ Nav (new, persistent/sticky on every page):
 ### Home
 
 ```
-┌───────────────────────────────────────────────────┐
-│ [nav — sticky]                                     │
-│  ┌───────────────────────────────────────────┐    │
+┌─────────────────────────────────────────────────────┐
+│ [nav — sticky]                                      │
+│  ┌─────────────────────────────────────────────┐    │
 │  │  [ halftone/screentone glow scene —         │    │
 │  │    see Visual Direction — not a screenshot] │    │
 │  │  headline (copy TBD)                        │    │
 │  │  [ VIEW THE GALLERY ] ← one loud CTA        │    │
-│  └───────────────────────────────────────────┘    │
-│  ─── What cyberui-2045 actually is ───────────────│
-│  1-2 sentence positioning + quiet, text-led        │
-│  feature highlights (tokens/theming, component     │
-│  count, dark-mode-native, accessible by default)   │
-│  — not a SaaS-card grid.                           │
-│  ─── closing CTA ──────────────────────────────────│
-│  "One demo live, four more coming." [ VIEW GALLERY]│
-└───────────────────────────────────────────────────┘
+│  └─────────────────────────────────────────────┘    │
+│  ─── What cyberui-2045 actually is ─────────────────│
+│  1-2 sentence positioning + quiet, text-led         │
+│  feature highlights (tokens/theming, component      │
+│  count, dark-mode-native, accessible by default)    │
+│  — not a SaaS-card grid.                            │
+│  ─── closing CTA ───────────────────────────────────│
+│  "One demo live, four more coming." [ VIEW GALLERY] │
+└─────────────────────────────────────────────────────┘
 ```
 No demo teaser/spotlight on Home — Home's job is the pitch, Gallery's job is the proof. Reaching Gallery is covered three ways: sticky nav, hero CTA, closing CTA — no need to duplicate demo content to compensate.
 
