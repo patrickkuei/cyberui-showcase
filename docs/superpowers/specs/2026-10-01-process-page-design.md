@@ -110,7 +110,7 @@ Each stage is a row with a vertical spine and a diamond node. Evidence is expand
 
 **Why not the library `Timeline`.** Its events accept `{ title, description?: string, time, status }`. A string description cannot hold an excerpt, a link or a caveat, and it has no neutral status. Filed as patrickkuei/CyberUI#60. This amends the hub spec's "Process page: cyberui's `Timeline` component". Revisit if #60 lands.
 
-**Mobile.** The strip wraps to two rows. Rows stack. Wide excerpts (the ASCII wireframe is about 55 columns) scroll horizontally inside their own block; the page never scrolls sideways.
+**Mobile.** The strip stays on one row: ten small fixed-size squares (2rem, 1.75rem at phone widths) that shrink slightly below about 356px rather than wrap. Rows stack. Wide excerpts (the ASCII wireframe is about 55 columns) scroll horizontally inside their own block; the page never scrolls sideways.
 
 ## 5. Visual direction
 
@@ -121,7 +121,9 @@ All within the hub rule: neutral chrome, neon only in Act 2, no new colors.
 - **Stage number:** mono, muted (`05`). Title at weight 600 in the default text color.
 - **Evidence panel:** surface background, mono, 1px neutral border, no glow even in Act 2 (the glow belongs to node and tag). A muted label line above gives source › section.
 - **Caveat:** muted text with an "Open to input:" label and a neutral left rule: the plain statement of what was not done, then the invitation, then a neutral underlined "Open an issue" link. No warning color.
-- **Overview strip:** a visible caption ("The 10 stages of making a product"), 10 segments with visible numbers; outline for Your decision, accent fill for 5-8; legend beneath. Each segment shows a library `Tooltip` on hover or focus ("Stage 5 · Visual Direction · Included"), so a first-time visitor can tell what the squares are. The Tooltip does not open on tap, so touch users rely on the stage rows below; the squares are not tab stops (screen readers get the same text from visually hidden text).
+- **Overview strip:** a compact, quiet glance bar: a visible caption ("The 10 stages of making a product"), ten small fixed-size squares with visible numbers (outline for Your decision, accent fill for 5-8), and a legend beneath. No labels and no tooltip. A tooltip was tried and dropped: the library `Tooltip` opens on hover and focus only (never on touch), has a 200 ms default delay and a heavy neon glow (filed as patrickkuei/CyberUI#61). The stage names are in the rows directly below, and screen readers get "Stage N: Title, Owner" from visually hidden text; the squares are not tab stops.
+- **Corners:** a 4px radius on the strip squares and the owner tags (2px on the legend swatches), matching the site's 6px code blocks and 8px buttons instead of sharp corners.
+- **Background dots:** a faint, static, neutral halftone dot field behind this page only (the existing `--color-border-default` dots at 10px, like the Home stat cards), fixed to the viewport and masked to fade diagonally, with one opacity knob (`--process-dots-opacity`). It is scoped to `.process-page` and hidden in print. It never uses the accent, so "neon only where it means something" still holds, and Home's cyan hero dots stay the one loud use. `.process-page` is `isolation: isolate` so the layer paints above the body's opaque background but under the content.
 - **Type:** unchanged (IBM Plex Sans/Mono).
 - To check on screen: that the accent-filled "Included" tag reads as a status label, not a call to action.
 
@@ -131,7 +133,7 @@ All within the hub rule: neutral chrome, neon only in Act 2, no new colors.
 |---|---|
 | Owner tag | Small custom `OwnerTag` (a plain labeled span) sharing the strip squares' look. A library `Badge` was tried first and dropped: it cannot render an outline, so the tags did not match the strip. |
 | Evidence excerpt | Site-local `CodeViewer`, extended for source link, "as of" line and inline horizontal scroll |
-| Overview strip | Custom CSS plus the library `Tooltip` per segment. `Steps` and `SegmentedProgress` model progress, not an ownership split. |
+| Overview strip | Custom CSS. `Steps` and `SegmentedProgress` model progress, not an ownership split. No tooltip (see §5). |
 | Spine and nodes | Custom CSS (see §4) |
 | Row container | Decide at implementation (`Card` versus plain markup) |
 
