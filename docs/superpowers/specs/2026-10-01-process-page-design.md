@@ -124,6 +124,7 @@ All within the hub rule: neutral chrome, neon only in Act 2, no new colors.
 - **Overview strip:** a compact, quiet glance bar: a visible caption ("The 10 stages of making a product"), ten small fixed-size squares with visible numbers (outline for Your decision, accent fill for 5-8), and a legend beneath. No labels and no tooltip. A tooltip was tried and dropped: the library `Tooltip` opens on hover and focus only (never on touch), has a 200 ms default delay and a heavy neon glow (filed as patrickkuei/CyberUI#61). The stage names are in the rows directly below, and screen readers get "Stage N: Title, Owner" from visually hidden text; the squares are not tab stops.
 - **Corners:** a 4px radius on the strip squares and the owner tags (2px on the legend swatches), matching the site's 6px code blocks and 8px buttons instead of sharp corners.
 - **Background dots:** a faint, static, neutral halftone dot field behind this page only (the existing `--color-border-default` dots at 10px, like the Home stat cards), fixed to the viewport and masked to fade diagonally, with one opacity knob (`--process-dots-opacity`). It is scoped to `.process-page` and hidden in print. It never uses the accent, so "neon only where it means something" still holds, and Home's cyan hero dots stay the one loud use. `.process-page` is `isolation: isolate` so the layer paints above the body's opaque background but under the content.
+- **Progress rail (wide screens only):** a vertical rail of the same ten chips, fixed in the page's left margin, that fades in once the inline strip has scrolled out of view and rings the stage currently being read (a plain solid outline: no glow, no accent). The inline strip stays as the first-view glance, the only version on phones and narrow windows, and the home of the caption and legend. The rail is a decorative duplicate: `aria-hidden`, not focusable, not clickable. It is opacity-only, and with `prefers-reduced-motion` or without `IntersectionObserver` it never appears. It is shown only where the left margin can hold it (viewport width of about 1360px and up, and tall enough to clear the nav), hidden in print. The current stage is the row crossing a thin band a third of the way down the viewport.
 - **Type:** unchanged (IBM Plex Sans/Mono).
 - To check on screen: that the accent-filled "Included" tag reads as a status label, not a call to action.
 
@@ -160,6 +161,6 @@ Per-stage, two-step reveal, answering the user's own scroll (the hub spec alread
 
 ## Out of scope
 
-- Sticky progress rail (the strip covers orientation).
+- Click-to-jump on the progress rail (see §5). The site routes on the URL hash, so it would need `scrollIntoView` handlers rather than anchors; revisit if wanted.
 - A third "AI-assisted" owner value. It would need evidence per stage; revisit as a v2 showing how AI-assisted work went in this project.
 - Any change to the library itself (see #60).
