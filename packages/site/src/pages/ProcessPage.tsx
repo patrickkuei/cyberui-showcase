@@ -24,8 +24,8 @@ export function ProcessPage() {
     'Each stage below shows what we produced for it while building this site, and says plainly where we produced less.';
 
   const closing =
-    `A template starts you with the ${INCLUDED_STAGES} included stages already done. ` +
-    `Pick one and take the other ${TOTAL_STAGES - INCLUDED_STAGES} from there.`;
+    `A template starts you with the ${INCLUDED_STAGES} included stages already done, ` +
+    `and you take the other ${TOTAL_STAGES - INCLUDED_STAGES} from there.`;
 
   return (
     <div ref={rootRef} className="process-page">
@@ -55,7 +55,7 @@ export function ProcessPage() {
         <h2>Start from the result</h2>
         <p>{closing}</p>
         <a href="#/templates">
-          Browse templates <span aria-hidden="true">→</span>
+          Pick a starting point <span aria-hidden="true">→</span>
         </a>
       </section>
 

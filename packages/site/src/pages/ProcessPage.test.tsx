@@ -99,9 +99,9 @@ describe('ProcessPage', () => {
     const { container } = render(<ProcessPage />);
     const closing = screen.getByRole('heading', { level: 2, name: 'Start from the result' }).closest('section')!;
     expect(within(closing).getByText(
-      'A template starts you with the 4 included stages already done. Pick one and take the other 6 from there.',
+      'A template starts you with the 4 included stages already done, and you take the other 6 from there.',
     )).toBeInTheDocument();
-    expect(within(closing).getByRole('link', { name: /Browse templates/ })).toHaveAttribute('href', '#/templates');
+    expect(within(closing).getByRole('link', { name: /Pick a starting point/ })).toHaveAttribute('href', '#/templates');
     expect(container.querySelector('.process-end')).toHaveAttribute('aria-hidden', 'true');
   });
 });
