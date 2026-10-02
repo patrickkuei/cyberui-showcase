@@ -45,7 +45,7 @@ interface EvidenceBase {
 }
 
 type StageEvidence =
-  | (EvidenceBase & { kind: 'excerpt'; excerpt: string; diagram?: boolean })  // diagram: scrolls instead of wrapping
+  | (EvidenceBase & { kind: 'excerpt'; excerpt: string; diagram?: boolean })  // diagram: scrolls instead of wrapping, set in one system monospace font with a tight line height
   | (EvidenceBase & { kind: 'image'; src: string; alt: string });              // stage 7 only
 
 interface ProcessStage {
@@ -78,7 +78,7 @@ interface ProcessStage {
 
 Stage 10 stays `'you'` so the 4-of-10 claim holds. Its summary can say that the template removes most of the handoff work.
 
-**Staleness.** A repo-level script (outside `packages/site`, which stays self-contained) checks that every `excerpt` still appears verbatim in its source file at HEAD, and fails with a message to refresh `asOf` if not. Stage 7's screenshot is exempt.
+**Staleness.** A repo-level script (outside `packages/site`, which stays self-contained) checks that every `excerpt` still appears verbatim in its source file at HEAD, and fails with a message to refresh `asOf` if not. Stage 7's screenshot is exempt. The check runs in CI (`.github/workflows/checks.yml`, on pull requests and pushes to main; it needs no install because the script uses only Node built-ins), so drift fails a PR instead of going unnoticed. Diagram excerpts (box-drawing art, column-aligned text) are rendered in one system monospace stack at line-height 1.25, because box-drawing glyphs are often missing from a web font and the substituted font's cell width would misalign the art; the Home wireframe in the hub spec was also re-aligned to a clean 55-column rectangle (it had been 53 to 55 columns wide), and that excerpt's `asOf` is the commit that did it.
 
 ## 4. Wireframe
 
