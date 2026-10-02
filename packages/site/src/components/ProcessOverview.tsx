@@ -17,7 +17,7 @@ export function ProcessOverview({ stages }: ProcessOverviewProps) {
       <p className="process-overview-caption">The 10 stages of making a product</p>
       <ol className="process-overview-strip">
         {stages.map((stage) => (
-          <li key={stage.number} data-owner={stage.owner}>
+          <li key={stage.number} className="process-chip" data-owner={stage.owner}>
             <span aria-hidden="true">{String(stage.number).padStart(2, '0')}</span>
             {/* Real text rather than aria-label on the <li>: a label on a bare list item is unreliable across screen readers. */}
             <span className="visually-hidden">{`Stage ${stage.number}: ${stage.title}, ${OWNER_LABEL[stage.owner]}`}</span>

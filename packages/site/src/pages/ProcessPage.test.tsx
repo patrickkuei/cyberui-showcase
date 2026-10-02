@@ -84,4 +84,13 @@ describe('ProcessPage', () => {
     // stage 1's summary and its excerpt both contain the phrase.
     expect(screen.getAllByText(/what can I build with this/)).toHaveLength(2);
   });
+
+  it('renders the decorative progress rail, hidden and not yet visible', () => {
+    stubIntersectionObserver('immediate');
+    const { container } = render(<ProcessPage />);
+    const rail = container.querySelector('.process-rail');
+    expect(rail).toHaveAttribute('aria-hidden', 'true');
+    // The strip counts as in view (the stub reports it intersecting), so the rail has not been revealed.
+    expect(rail).toHaveAttribute('data-visible', 'false');
+  });
 });

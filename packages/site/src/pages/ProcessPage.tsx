@@ -1,6 +1,9 @@
+import { useRef } from 'react';
 import { ProcessOverview } from '../components/ProcessOverview';
+import { ProcessRail } from '../components/ProcessRail';
 import { ProcessStageRow } from '../components/ProcessStageRow';
 import { INCLUDED_STAGES, PROCESS_STAGES, TOTAL_STAGES, groupIntoActs } from '../content/processStages';
+import { useProcessScrollSpy } from '../hooks/useProcessScrollSpy';
 
 /**
  * "How we design": the ten stages of making a product, each with the real
@@ -10,6 +13,9 @@ import { INCLUDED_STAGES, PROCESS_STAGES, TOTAL_STAGES, groupIntoActs } from '..
  * docs/superpowers/specs/2026-10-01-process-page-design.md.
  */
 export function ProcessPage() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const overviewRef = useRef<HTMLDivElement>(null);
+  const { current, pastOverview } = useProcessScrollSpy(rootRef, overviewRef);
   const acts = groupIntoActs(PROCESS_STAGES);
   const intro =
     `${INCLUDED_STAGES} of ${TOTAL_STAGES} stages are included in a cyberui-2045 template; ` +
@@ -17,11 +23,13 @@ export function ProcessPage() {
     'Each stage below shows what we produced for it while building this site, and says plainly where we produced less.';
 
   return (
-    <div className="process-page">
+    <div ref={rootRef} className="process-page">
       <h1>How we design</h1>
       <p className="process-intro">{intro}</p>
 
-      <ProcessOverview stages={PROCESS_STAGES} />
+      <div ref={overviewRef}>
+        <ProcessOverview stages={PROCESS_STAGES} />
+      </div>
 
       {acts.map((act) => (
         <section
@@ -37,6 +45,8 @@ export function ProcessPage() {
           </ol>
         </section>
       ))}
+
+      <ProcessRail stages={PROCESS_STAGES} current={current} visible={pastOverview} />
     </div>
   );
 }

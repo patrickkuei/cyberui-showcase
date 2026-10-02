@@ -25,7 +25,7 @@ export function ProcessStageRow({ stage }: ProcessStageRowProps) {
   const { evidence } = stage;
 
   return (
-    <li ref={ref} className="process-stage" data-owner={stage.owner} data-reveal={reveal}>
+    <li ref={ref} className="process-stage" data-owner={stage.owner} data-reveal={reveal} data-stage-number={stage.number}>
       <span className="process-stage-node" aria-hidden="true" />
       <div className="process-stage-header">
         <span className="process-stage-number">{String(stage.number).padStart(2, '0')}</span>
