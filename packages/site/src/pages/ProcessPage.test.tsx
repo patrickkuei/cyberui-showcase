@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import { ProcessPage } from './ProcessPage';
 import { stubIntersectionObserver } from '../test/intersectionObserver';
 
@@ -103,5 +103,44 @@ describe('ProcessPage', () => {
     )).toBeInTheDocument();
     expect(within(closing).getByRole('link', { name: /Pick a starting point/ })).toHaveAttribute('href', '#/templates');
     expect(container.querySelector('.process-end')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('keeps the base dot strength when nothing reports the current stage', () => {
+    stubIntersectionObserver('never');
+    const { container } = render(<ProcessPage />);
+    expect(container.querySelector('.process-page')).toHaveAttribute('data-dots', 'base');
+  });
+
+  it('brightens the dots while the current stage is an included one', () => {
+    const instances: { callback: IntersectionObserverCallback; options?: IntersectionObserverInit }[] = [];
+    class Recorder {
+      constructor(
+        callback: IntersectionObserverCallback,
+        options?: IntersectionObserverInit,
+      ) {
+        instances.push({ callback, options });
+      }
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    }
+    vi.stubGlobal('IntersectionObserver', Recorder);
+    const { container } = render(<ProcessPage />);
+    const page = container.querySelector('.process-page')!;
+    const rowObserver = instances.find((o) => o.options?.rootMargin === '-35% 0px -60% 0px')!;
+    const reach = (n: number) =>
+      act(() =>
+        rowObserver.callback(
+          [{ isIntersecting: true, target: container.querySelector(`[data-stage-number="${n}"]`)! } as IntersectionObserverEntry],
+          {} as IntersectionObserver,
+        ),
+      );
+    expect(page).toHaveAttribute('data-dots', 'base');
+    reach(6);
+    expect(page).toHaveAttribute('data-dots', 'included');
+    reach(9);
+    expect(page).toHaveAttribute('data-dots', 'base');
+    reach(8);
+    expect(page).toHaveAttribute('data-dots', 'included');
   });
 });
