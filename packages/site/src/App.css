@@ -759,25 +759,22 @@ body {
 
 /* ---- Process progress rail ---- */
 
-/* A decorative duplicate of the inline strip, fixed to the left margin once
-   the strip has scrolled away (ProcessPage drives data-visible). position:
-   fixed takes it out of the flex flow, so it adds no gap to the page. Opacity
-   is the only thing that animates, like the stage reveal. The current stage
-   gets a plain outline ring: no accent, no glow (those belong to the included
-   act). Only shown where the left margin can hold it; below that the inline
-   strip is the only version, as on phones.
+/* A decorative duplicate of the inline strip, fixed to the far left of the
+   screen once the strip has scrolled away (ProcessPage drives data-visible).
+   position: fixed takes it out of the flex flow, so it adds no gap to the
+   page. Opacity is the only thing that animates, like the stage reveal. The
+   current stage gets a plain outline ring: no accent, no glow (those belong
+   to the included act). Only shown where the left margin can hold it; below
+   that the inline strip is the only version, as on phones.
 
-   Placement: the .shell content column is max 1216px and centered, so its
-   left edge is 50% - 608px. The rail (1.75rem = 28px wide) sits 1rem (16px)
-   left of that: left = 50% - 608px - 16px - 28px = 50% - 652px, clamped to at
-   least 0.75rem from the viewport edge.
-
-   Breakpoint: each side margin must hold the rail (28px) + the 16px gap +
-   the 12px edge clearance = 56px, so the layout must be 1216 + 2 x 56 =
-   1328px wide (exactly where the max() clamp stops binding). Media queries
-   include the scrollbar (up to ~15px) that the layout width excludes, so
-   1360px leaves slack: at 1360 with a 15px scrollbar the layout is 1345px and
-   the rail still clears the content.
+   Placement: left: 4px, so the rail (1.75rem = 28px wide) occupies
+   x = 4px..32px. It must keep at least 0.75rem (12px) clear of the content
+   column, which is the .shell's max 1216px column centered in the viewport:
+   its left edge is (W - 1216px) / 2 once W > 1216px + 2 x side padding (max
+   32px). Required: (W - 1216) / 2 >= 4 + 28 + 12 = 44px, so W >= 1216 + 88 =
+   1304px of layout width. Media queries include the scrollbar (up to ~15px)
+   that the layout width excludes, so min-width is 1320px: with a 15px
+   scrollbar the layout is 1305px and the left edge is 44.5px.
 
    Height: the rail is 10 x 24px + 9 x 4px = 276px tall and centered, so it
    clears the ~56px sticky nav (2 x 1rem padding + a line) with 16px to spare
@@ -791,7 +788,7 @@ body {
   display: none;
   position: fixed;
   top: 50%;
-  left: max(0.75rem, calc(50% - 652px));
+  left: 4px;
   transform: translateY(-50%);
   z-index: 1;
   grid-template-columns: 1.75rem;
@@ -810,7 +807,7 @@ body {
   outline-offset: 2px;
 }
 
-@media (min-width: 1360px) and (min-height: 481px) {
+@media (min-width: 1320px) and (min-height: 481px) {
   .process-rail {
     display: grid;
   }
